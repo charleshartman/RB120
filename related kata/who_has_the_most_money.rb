@@ -39,9 +39,12 @@ def most_money(students)
   # NOTE: the Student class is preloaded
 end
 
+
 phil = Student.new("Phil", 2, 2, 1)
 cam = Student.new("Cameron", 2, 2, 0)
 geoff = Student.new("Geoff", 0, 3, 0)
+
+puts (cam.fives * 5) + (cam.tens * 10) + (cam.twenties * 20)
 
 p most_money([cam, geoff, phil]) == "Phil"
 p most_money([cam, geoff]) == "all"
@@ -60,6 +63,8 @@ output: string
 data structure: class, array, integer 
 
 algorithm:
-  - 
+  - initialize (most) to []
+  - iterate through students in the given array
+  - money = (fives * 5) + (tens * 10) + (twenties * 20)
 
 =end

@@ -101,7 +101,8 @@ end
 class MyCar < Vehicle
   attr_accessor :dice
 
-  include Blingable  
+  include Blingable
+  include Towable 
   
   NUMBER_OF_DOORS = 4
 
