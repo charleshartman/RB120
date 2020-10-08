@@ -44,10 +44,13 @@ class Move
 end
 
 class Player
-  attr_accessor :move, :name
+  attr_accessor :move, :name, :score
+
+  include RPSSL
 
   def initialize
     set_name
+    @score = 0
   end
 end
 
@@ -61,6 +64,7 @@ class Human < Player
       puts "I'm sorry, you must enter a value."
     end
     self.name = n
+    clear_screen
   end
 
   def choose
@@ -72,6 +76,7 @@ class Human < Player
       puts "Sorry, invalid choice."
     end
     self.move = Move.new(choice)
+    clear_screen
   end
 end
 
@@ -90,14 +95,14 @@ class RPSGame
   attr_accessor :human, :computer
 
   include RPSSL
-  
+
   def initialize
     @human = Human.new
     @computer = Computer.new
   end
 
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
+    puts "Welcome to Rock, Paper, Scissors, #{human.name}!"
   end
 
   def display_goodbye_message
@@ -109,14 +114,41 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}."
   end
 
+  def scored(winner)
+    winner.score += 1
+    puts "#{winner.name} won!"
+    puts
+  end
+
   def display_winner
     if human.move > computer.move
-      puts "#{human.name} won!"
+      scored(human)
     elsif computer.move > human.move
-      puts "#{computer.name} won!"
+      scored(computer)
     else
       puts "It's a tie!"
+      puts
     end
+  end
+
+  def match_score
+    puts "*** Match Score ***"
+    puts "#{human.name}: #{human.score}"
+    puts "#{computer.name}: #{computer.score}"
+    puts
+  end
+
+  def match_winner?
+    human.score == 5 || computer.score == 5
+  end
+
+  def congrats
+    if human.score == 5
+      puts "#{human.name} wins the match!"
+    else
+      puts "#{computer.name} wins the match!"
+    end
+    puts
   end
 
   def play_again?
@@ -132,17 +164,23 @@ class RPSGame
     return true if answer.downcase == 'y'
   end
 
-  def play
+  def play_round
+    human.choose
+    computer.choose
+    display_moves
+    display_winner
+  end
+
+  def play_match
     display_welcome_message
     loop do
-      human.choose
-      computer.choose
-      display_moves
-      display_winner
-      break unless play_again?
+      play_round
+      match_score
+      break if match_winner?
     end
-    display_goodbye_message
+    congrats
+    play_again? ? RPSGame.new.play_match : display_goodbye_message
   end
 end
 
-RPSGame.new.play
+RPSGame.new.play_match
