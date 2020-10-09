@@ -94,6 +94,17 @@ class Hal < Player
   end
 end
 
+class K2SO < Player
+  def set_name
+    self.name = 'K-2SO'
+  end
+
+  def choose
+    self.move = ['paper', 'paper', 'paper', 'spock', 'lizard', \
+                 'lizard', 'lizard', 'scissors', 'scissors'].sample
+  end
+end
+
 # Game Orchestration Engine
 class RPSGame
   attr_accessor :human, :computer, :log
