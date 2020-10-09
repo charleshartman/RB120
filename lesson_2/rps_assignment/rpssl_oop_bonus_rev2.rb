@@ -19,6 +19,7 @@ end
 
 class History
   attr_accessor :moves_log
+
   def initialize
     @moves_log = []
   end
