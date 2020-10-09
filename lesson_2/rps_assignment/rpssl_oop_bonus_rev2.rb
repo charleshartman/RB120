@@ -1,13 +1,15 @@
-# rpssl_oop_bonus.rb
+# rpssl_oop_bonus_rev2.rb
 
 module RPSSL
   RPSSL_LOGIC = {
-    rock: ['scissors', 'lizard'],
-    paper: ['rock', 'spock'],
-    scissors: ['paper', 'lizard'],
-    spock: ['scissors', 'rock'],
-    lizard: ['spock', 'paper']
+    'rock' => ['scissors', 'lizard'],
+    'paper' => ['rock', 'spock'],
+    'scissors' => ['paper', 'lizard'],
+    'spock' => ['scissors', 'rock'],
+    'lizard' => ['spock', 'paper']
   }
+
+  PLAYS = ['rock', 'paper', 'scissors', 'spock', 'lizard']
 
   def clear_screen
     system 'clear'
@@ -15,45 +17,18 @@ module RPSSL
   end
 end
 
-class Move
-  VALUES = ['rock', 'paper', 'scissors'] # , 'spock', 'lizard']
+# class Move
+#   include RPSSL
+#   attr_reader :value
 
-  def initialize(value)
-    @value = value
-  end
+#   def initialize(value)
+#     @value = value
+#   end
 
-  def scissors?
-    @value == 'scissors'
-  end
-
-  def rock?
-    @value == 'rock'
-  end
-
-  def paper?
-    @value == 'paper'
-  end
-
-  # def lizard?
-  #   @value = 'lizard'
-  # end
-
-  # def spock?
-  #   @value = 'spock'
-  # end
-
-  def >(other_move)
-    RPSSL_LOGIC[@value.to_sym].include?(other_move)
-  end
-
-  def <(other_move)
-    RPSSL_LOGIC[other_move.to_sym].include?(@value)
-  end
-
-  def to_s
-    @value
-  end
-end
+#   def to_s
+#     @value
+#   end
+# end
 
 class Player
   attr_accessor :move, :name, :score
@@ -70,7 +45,8 @@ class Human < Player
   def set_name
     n = ""
     loop do
-      puts "Please enter your name:"
+      clear_screen
+      puts "\n\nPlease enter your name:"
       n = gets.chomp
       break unless n.empty?
       puts "I'm sorry, you must enter a value."
@@ -82,12 +58,13 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      puts "Please choose rock, paper, or scissors:"
-      choice = gets.chomp
-      break if Move::VALUES.include?(choice)
+      puts "Please choose rock, paper, scissors, spock or lizard:"
+      choice = gets.chomp.downcase
+      break if RPSSL::PLAYS.include?(choice)
       puts "Sorry, invalid choice."
     end
-    self.move = Move.new(choice)
+    self.move = choice
+    # self.move = Move.new(choice)
     clear_screen
   end
 end
@@ -98,7 +75,8 @@ class Computer < Player
   end
 
   def choose
-    self.move = Move.new(Move::VALUES.sample)
+    self.move = RPSSL::PLAYS.sample
+    # self.move = Move.new(RPSSL::PLAYS.sample)
   end
 end
 
@@ -114,11 +92,11 @@ class RPSGame
   end
 
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors, #{human.name}!"
+    puts "Welcome to Rock, Paper, Scissors, Spock, Lizard, #{human.name}!"
   end
 
   def display_goodbye_message
-    puts "Thank you for playing Rock, Paper, Scissors. Goodbye!"
+    puts "Thank you for playing Rock, Paper, Scissors, Spock, Lizard. Goodbye!"
   end
 
   def display_moves
@@ -133,13 +111,12 @@ class RPSGame
   end
 
   def display_winner
-    if human.move > computer.move
+    if RPSSL_LOGIC[human.move].include?(computer.move)
       scored(human)
-    elsif computer.move > human.move
+    elsif RPSSL_LOGIC[computer.move].include?(human.move)
       scored(computer)
     else
       puts "It's a tie!"
-      puts
     end
   end
 
