@@ -17,19 +17,6 @@ module RPSSL
   end
 end
 
-# class Move
-#   include RPSSL
-#   attr_reader :value
-
-#   def initialize(value)
-#     @value = value
-#   end
-
-#   def to_s
-#     @value
-#   end
-# end
-
 class Player
   attr_accessor :move, :name, :score
 
@@ -46,7 +33,7 @@ class Human < Player
     n = ""
     loop do
       clear_screen
-      puts "\n\nPlease enter your name:"
+      puts "\nPlease enter your name:"
       n = gets.chomp
       break unless n.empty?
       puts "I'm sorry, you must enter a value."
@@ -64,7 +51,6 @@ class Human < Player
       puts "Sorry, invalid choice."
     end
     self.move = choice
-    # self.move = Move.new(choice)
     clear_screen
   end
 end
@@ -76,7 +62,6 @@ class Computer < Player
 
   def choose
     self.move = RPSSL::PLAYS.sample
-    # self.move = Move.new(RPSSL::PLAYS.sample)
   end
 end
 
@@ -92,7 +77,8 @@ class RPSGame
   end
 
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors, Spock, Lizard, #{human.name}!"
+    puts "\nWelcome to Rock, Paper, Scissors, Spock, Lizard, " \
+         "\e[32m#{human.name}\e[0m!"
   end
 
   def display_goodbye_message
@@ -160,6 +146,17 @@ class RPSGame
     display_winner
   end
 
+  def play_continues
+    puts "\nReseting all scores to zero..."
+    sleep 1.5
+    human.score = 0
+    computer.score = 0
+    puts "New Game Loading..."
+    sleep 1.5
+    clear_screen
+    play_match
+  end
+
   def play_match
     display_welcome_message
     loop do
@@ -168,7 +165,7 @@ class RPSGame
       break if match_winner?
     end
     congrats
-    play_again? ? RPSGame.new.play_match : display_goodbye_message
+    play_again? ? play_continues : display_goodbye_message
   end
 end
 
