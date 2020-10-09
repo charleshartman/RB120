@@ -17,6 +17,13 @@ module RPSSL
   end
 end
 
+class History
+  attr_accessor :moves_log
+  def initialize
+    @moves_log = []
+  end
+end
+
 class Player
   attr_accessor :move, :name, :score
 
@@ -67,13 +74,14 @@ end
 
 # Game Orchestration Engine
 class RPSGame
-  attr_accessor :human, :computer
+  attr_accessor :human, :computer, :log
 
   include RPSSL
 
   def initialize
     @human = Human.new
     @computer = Computer.new
+    @log = History.new
   end
 
   def display_welcome_message
@@ -88,6 +96,7 @@ class RPSGame
   def display_moves
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
+    log.moves_log << [human.move, computer.move]
   end
 
   def scored(winner)
