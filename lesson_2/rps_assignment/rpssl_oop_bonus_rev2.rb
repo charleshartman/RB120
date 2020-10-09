@@ -90,13 +90,23 @@ class RPSGame
   end
 
   def display_goodbye_message
-    puts "Thank you for playing Rock, Paper, Scissors, Spock, Lizard. Goodbye!"
+    puts "\nThank you for playing Rock, Paper, Scissors, Spock, Lizard."
+    puts
+    puts "Here is the log of all the moves from your play session:"
+    display_log
+    puts "\nGoodbye!"
   end
 
   def display_moves
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
     log.moves_log << [human.move, computer.move]
+  end
+
+  def display_log
+    log.moves_log.each do |sub|
+      puts "#{human.name}: #{sub.first} | #{computer.name}: #{sub.last}"
+    end
   end
 
   def scored(winner)
