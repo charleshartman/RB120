@@ -1,4 +1,4 @@
-# rpssl_oop_bonus_rev2.rb
+# rpssl_oop_bonus_rev3.rb
 
 module RPSSL
   RPSSL_LOGIC = {
@@ -141,8 +141,8 @@ class RPSGame
 
   def display_log
     log.moves_log.each do |sub|
-      puts "\e[32m#{human.name}\e[0m: #{sub.first} | Computer opponent: " \
-         + "\e[32m#{sub.last}\e[0m"
+      puts "\e[32m#{human.name}\e[0m: #{sub.first} | \e[32mComputer:\e[0m " \
+         + "#{sub.last}"
     end
   end
 
@@ -204,11 +204,11 @@ class RPSGame
 
   def play_continues
     @computer = [R2D2.new, AlphaGo.new, Hal.new].sample
-    puts "\nReseting all scores to zero..."
+    puts "\n\e[32mReseting all scores to zero...\e[0m"
     sleep 1.5
     human.score = 0
     computer.score = 0
-    puts "New Game Loading..."
+    puts "\e[32mNew Game Loading...\e[0m"
     sleep 1.5
     clear_screen
     play_match
