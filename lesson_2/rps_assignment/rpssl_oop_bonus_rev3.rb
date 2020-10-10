@@ -32,7 +32,7 @@ class History
 end
 
 class Player
-  attr_accessor :move, :name, :score
+  attr_accessor :name, :move, :score
 
   include RPSSL
 
@@ -95,8 +95,8 @@ class Hal < Player
   end
 
   def choose
-    self.move = ['rock', 'paper', 'scissors', 'spock', 'lizard', \
-                 'scissors', 'scissors', 'scissors', 'scissors'].sample
+    self.move = %w(rock paper scissors lizard scissors scissors scissors
+                   scissors).sample
   end
 end
 
@@ -106,15 +106,13 @@ class K2SO < Player
   end
 
   def choose
-    self.move = ['paper', 'paper', 'paper', 'spock', 'lizard', \
-                 'lizard', 'lizard', 'scissors', 'scissors'].sample
+    self.move = %w(paper paper paper spock lizard lizard lizard scissors
+                   scissors).sample
   end
 end
 
 # Game Orchestration Engine
 class RPSGame
-  attr_accessor :human, :computer, :log
-
   include RPSSL
 
   def initialize
@@ -209,7 +207,7 @@ class RPSGame
   end
 
   def play_continues
-    @computer = [R2D2.new, AlphaGo.new, Hal.new].sample
+    @computer = [R2D2.new, AlphaGo.new, Hal.new, K2SO.new].sample
     puts "\n\e[32mReseting all scores to zero...\e[0m"
     sleep 1.5
     human.score = 0
@@ -230,6 +228,10 @@ class RPSGame
     congratulations
     play_again? ? play_continues : display_goodbye_message
   end
+
+  protected
+
+  attr_accessor :human, :computer, :log
 end
 
 RPSGame.new.play_match
