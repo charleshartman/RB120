@@ -228,7 +228,15 @@ class RPSGame
     answer == 'y'
   end
 
+  def reset_ux
+    puts "\n\e[32mResetting all scores to zero...\e[0m"
+    sleep 1.5
+    puts "\e[32mNew Game Loading...\e[0m"
+    sleep 1.5
+  end
+
   def reset_game
+    reset_ux
     @computer = [R2D2.new, AlphaGo.new, Hal.new, K2SO.new].sample
     human.score = 0
     computer.score = 0
@@ -243,10 +251,6 @@ class RPSGame
   end
 
   def play_continues
-    puts "\n\e[32mReseting all scores to zero...\e[0m"
-    sleep 1.5
-    puts "\e[32mNew Game Loading...\e[0m"
-    sleep 1.5
     reset_game
     play_match
   end
