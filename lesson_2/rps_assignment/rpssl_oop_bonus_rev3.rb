@@ -9,7 +9,13 @@ module RPSSL
     'lizard' => ['spock', 'paper']
   }
 
-  PLAYS = ['rock', 'paper', 'scissors', 'spock', 'lizard']
+  INPUT_CHAR = { 'r' => 'rock',
+                 'p' => 'paper',
+                 'sc' => 'scissors',
+                 'sp' => 'spock',
+                 'l' => 'lizard' }
+
+  PLAYS = %w(rock paper scissors spock lizard)
 
   def clear_screen
     system 'clear'
@@ -53,8 +59,8 @@ class Human < Player
   def choose
     choice = nil
     loop do
-      puts "Please choose rock, paper, scissors, spock or lizard:"
-      choice = gets.chomp.downcase
+      puts "Please choose (r)ock, (p)aper, (sc)issors, (sp)ock or (l)izard:"
+      choice = INPUT_CHAR[gets.chomp.downcase]
       break if RPSSL::PLAYS.include?(choice)
       puts "Sorry, invalid choice."
     end
@@ -142,7 +148,7 @@ class RPSGame
   def display_log
     log.moves_log.each do |sub|
       puts "\e[32m#{human.name}\e[0m: #{sub.first} | \e[32mComputer:\e[0m " \
-         + "#{sub.last}"
+         + sub.last.to_s
     end
   end
 
