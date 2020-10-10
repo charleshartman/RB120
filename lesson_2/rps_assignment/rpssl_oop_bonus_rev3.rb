@@ -117,9 +117,24 @@ class RPSGame
 
   def initialize
     @human = Human.new
-    @computer = [R2D2.new, AlphaGo.new, Hal.new].sample
+    @computer = [R2D2.new, AlphaGo.new, Hal.new, K2SO.new].sample
     @log = History.new
   end
+
+  def play_match
+    display_welcome_message
+    loop do
+      play_round
+      match_score
+      break if match_winner?
+    end
+    congratulations
+    play_again? ? play_continues : display_goodbye_message
+  end
+
+  protected
+
+  attr_accessor :human, :computer, :log
 
   def display_welcome_message
     puts "\nWelcome to Rock, Paper, Scissors, Spock, Lizard, " \
@@ -129,10 +144,9 @@ class RPSGame
   end
 
   def display_goodbye_message
-    puts "\nThank you for playing Rock, Paper, Scissors, Spock, Lizard."
-    puts
-    puts "Here is the log of all the moves from your play session:"
-    puts
+    clear_screen
+    puts "\nThank you for playing Rock, Paper, Scissors, Spock, Lizard.\n\n"
+    puts "Play session log:"
     display_log
     puts "\nGoodbye!"
   end
@@ -190,13 +204,19 @@ class RPSGame
     answer = nil
     loop do
       puts "Would you like to play again? (y/n)"
-      answer = gets.chomp
+      answer = gets.chomp.downcase
       break if ['y', 'n'].include?(answer)
       puts "I'm sorry, you musy choose y or n."
     end
 
-    return false if answer.downcase == 'n'
-    return true if answer.downcase == 'y'
+    answer == 'y'
+  end
+
+  def reset_game
+    @computer = [R2D2.new, AlphaGo.new, Hal.new, K2SO.new].sample
+    human.score = 0
+    computer.score = 0
+    clear_screen
   end
 
   def play_round
@@ -207,31 +227,13 @@ class RPSGame
   end
 
   def play_continues
-    @computer = [R2D2.new, AlphaGo.new, Hal.new, K2SO.new].sample
     puts "\n\e[32mReseting all scores to zero...\e[0m"
     sleep 1.5
-    human.score = 0
-    computer.score = 0
     puts "\e[32mNew Game Loading...\e[0m"
     sleep 1.5
-    clear_screen
+    reset_game
     play_match
   end
-
-  def play_match
-    display_welcome_message
-    loop do
-      play_round
-      match_score
-      break if match_winner?
-    end
-    congratulations
-    play_again? ? play_continues : display_goodbye_message
-  end
-
-  protected
-
-  attr_accessor :human, :computer, :log
 end
 
 RPSGame.new.play_match
