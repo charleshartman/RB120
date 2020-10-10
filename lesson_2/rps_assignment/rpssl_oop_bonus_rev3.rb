@@ -9,13 +9,11 @@ module RPSSL
     'lizard' => ['spock', 'paper']
   }
 
-  INPUT_CHAR = { 'r' => 'rock',
-                 'p' => 'paper',
-                 'sc' => 'scissors',
-                 'sp' => 'spock',
-                 'l' => 'lizard' }
-
-  PLAYS = %w(rock paper scissors spock lizard)
+  PLAYS = { 'r' => 'rock',
+            'p' => 'paper',
+            'sc' => 'scissors',
+            'sp' => 'spock',
+            'l' => 'lizard' }
 
   def clear_screen
     system 'clear'
@@ -32,7 +30,7 @@ class History
 end
 
 class Player
-  attr_accessor :name, :move, :score
+  attr_accessor :name, :move, :score, :message
 
   include RPSSL
 
@@ -60,8 +58,8 @@ class Human < Player
     choice = nil
     loop do
       puts "Please choose (r)ock, (p)aper, (sc)issors, (sp)ock or (l)izard:"
-      choice = INPUT_CHAR[gets.chomp.downcase]
-      break if RPSSL::PLAYS.include?(choice)
+      choice = PLAYS[gets.chomp.downcase]
+      break if RPSSL::PLAYS.values.include?(choice)
       puts "Sorry, invalid choice."
     end
     self.move = choice
@@ -74,14 +72,22 @@ class AlphaGo < Player
     self.name = 'Alpha Go'
   end
 
+  def message
+    self.message = 'My intellect is legendary.'
+  end
+
   def choose
-    self.move = RPSSL::PLAYS.sample
+    self.move = RPSSL::PLAYS.values.sample
   end
 end
 
 class R2D2 < Player
   def set_name
     self.name = 'R2D2'
+  end
+
+  def message
+    self.message = 'I like holograms, bathing, rocks and C3PO (in that order).'
   end
 
   def choose
@@ -92,6 +98,10 @@ end
 class Hal < Player
   def set_name
     self.name = 'Hal'
+  end
+
+  def message
+    self.message = 'A stitch in time saves 9000, Dave.'
   end
 
   def choose
@@ -105,9 +115,14 @@ class K2SO < Player
     self.name = 'K-2SO'
   end
 
+  def message
+    self.message = "When I am not writing the most popular Star Trek " \
+                   "newsletter \non Tatooine, I enjoy the company of my pet " \
+                   "iguana."
+  end
+
   def choose
-    self.move = %w(paper paper paper spock lizard lizard lizard scissors
-                   scissors).sample
+    self.move = %w(paper paper paper spock lizard lizard lizard spock).sample
   end
 end
 
@@ -139,8 +154,9 @@ class RPSGame
   def display_welcome_message
     puts "\nWelcome to Rock, Paper, Scissors, Spock, Lizard, " \
          "\e[32m#{human.name}\e[0m!"
-    puts "Win \e[32m5\e[0m games to win the match!"
-    puts "\e[32m#{computer.name}\e[0m is your opponent.\n"
+    puts "Win \e[32m5\e[0m games to win the match!\n\n"
+    puts "\e[32m#{computer.name}\e[0m, your opponent, greets you:\n"
+    puts "\e[34m#{computer.message}\e[0m\n\n"
   end
 
   def display_goodbye_message
