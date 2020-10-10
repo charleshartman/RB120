@@ -170,13 +170,16 @@ class RPSGame
   def display_moves
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
-    log.moves_log << [human.move, computer.move]
+    log_moves
+  end
+
+  def log_moves
+    log.moves_log << [human.name, human.move, computer.name, computer.move]
   end
 
   def display_log
     log.moves_log.each do |sub|
-      puts "\e[32m#{human.name}\e[0m: #{sub.first} | \e[32mComputer:\e[0m " \
-         + sub.last.to_s
+      puts "\e[32m#{sub[0]}\e[0m: #{sub[1]} | \e[32m#{sub[2]}\e[0m: #{sub[3]}"
     end
   end
 
