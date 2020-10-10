@@ -59,7 +59,7 @@ class Human < Player
     loop do
       puts "Please choose (r)ock, (p)aper, (sc)issors, (sp)ock or (l)izard:"
       choice = PLAYS[gets.chomp.downcase]
-      break if RPSSL::PLAYS.values.include?(choice)
+      break if PLAYS.values.include?(choice)
       puts "Sorry, invalid choice."
     end
     self.move = choice
@@ -77,7 +77,7 @@ class AlphaGo < Player
   end
 
   def choose
-    self.move = RPSSL::PLAYS.values.sample
+    self.move = PLAYS.values.sample
   end
 end
 
@@ -147,7 +147,7 @@ class RPSGame
     play_again? ? play_continues : display_goodbye_message
   end
 
-  protected
+  private
 
   attr_accessor :human, :computer, :log
 
@@ -227,7 +227,6 @@ class RPSGame
       break if ['y', 'n'].include?(answer)
       puts "I'm sorry, you musy choose y or n."
     end
-
     answer == 'y'
   end
 
