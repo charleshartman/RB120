@@ -155,13 +155,14 @@ class RPSGame
     puts "\nWelcome to Rock, Paper, Scissors, Spock, Lizard, " \
          "\e[32m#{human.name}\e[0m!"
     puts "Win \e[32m5\e[0m games to win the match!\n\n"
-    puts "\e[32m#{computer.name}\e[0m, your opponent, greets you:\n"
+    puts "Your opponent, \e[32m#{computer.name}\e[0m, greets you:\n"
     puts "\e[34m#{computer.message}\e[0m\n\n"
   end
 
   def display_goodbye_message
     clear_screen
-    puts "\nThank you for playing Rock, Paper, Scissors, Spock, Lizard.\n\n"
+    puts "\n\e[34mThank you for playing Rock, Paper, Scissors, Spock, " \
+         "Lizard.\e[0m\n\n"
     puts "Play session log:"
     display_log
     puts "\nGoodbye!"
@@ -232,9 +233,11 @@ class RPSGame
 
   def reset_ux
     puts "\n\e[32mResetting all scores to zero...\e[0m"
-    sleep 1.5
+    sleep 1.25
     puts "\e[32mNew Game Loading...\e[0m"
-    sleep 1.5
+    sleep 1.25
+    puts "\e[32mRandomly selecting your opponent...\e[0m"
+    sleep 1.25
   end
 
   def reset_game
