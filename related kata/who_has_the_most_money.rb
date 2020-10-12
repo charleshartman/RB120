@@ -36,7 +36,12 @@ If there is only one student, then that student has the most money.
 =end
 
 def most_money(students)
-  # NOTE: the Student class is preloaded
+  most = {}
+  students.each do |student|
+    most[student.name] = (student.fives * 5) + (student.tens * 10) + (student.twenties * 20)
+  end
+  return "all" if most.values.all? { |val| val == most.values[0] } && most.length > 1
+  most.key(most.values.max)
 end
 
 
@@ -44,7 +49,7 @@ phil = Student.new("Phil", 2, 2, 1)
 cam = Student.new("Cameron", 2, 2, 0)
 geoff = Student.new("Geoff", 0, 3, 0)
 
-puts (cam.fives * 5) + (cam.tens * 10) + (cam.twenties * 20)
+# puts (cam.fives * 5) + (cam.tens * 10) + (cam.twenties * 20)
 
 p most_money([cam, geoff, phil]) == "Phil"
 p most_money([cam, geoff]) == "all"
@@ -63,8 +68,14 @@ output: string
 data structure: class, array, integer 
 
 algorithm:
-  - initialize (most) to []
+  - initialize (most) to {} default value 0
   - iterate through students in the given array
   - money = (fives * 5) + (tens * 10) + (twenties * 20)
+  - push student = total into (most)
+  - iterate through (most) values and find max
+  - iterate through hash
+    - if key - value is equal to max then add to array (result)
+    - if (result) size is greater than 1 return "all"
+    - else return first and only element in (result)
 
 =end
