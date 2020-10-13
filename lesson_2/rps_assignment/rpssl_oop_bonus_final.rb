@@ -199,8 +199,8 @@ class RPSGame
   end
 
   def keep_score
-    if human_won? then human.score += 1
-    elsif computer_won? then computer.score += 1; end
+    human.score += 1 if human_won?
+    computer.score += 1 if computer_won?
   end
 
   def match_score
