@@ -9,7 +9,7 @@ class Board
 
   def initialize
     @squares = {}
-    (1..9).each { |key| @squares[key] = Square.new }
+    reset
   end
 
   def get_square_at(key)
@@ -28,22 +28,31 @@ class Board
     unmarked_keys.empty?
   end
 
-  # returns winning marker
   def someone_won?
-    !!detect_winner
+    !!winning_marker
   end
 
-  def detect_winner
+  def count_human_marker(squares)
+    squares.collect(&:marker).count(TTTGame::HUMAN_MARKER)
+  end
+
+  def count_computer_marker(squares)
+    squares.collect(&:marker).count(TTTGame::COMPUTER_MARKER)
+  end
+
+  def winning_marker
     WINNING_LINES.each do |line|
-      if @squares[line[0]].marker == TTTGame::HUMAN_MARKER && @squares[line[1]].marker \
-        == TTTGame::HUMAN_MARKER && @squares[line[2]].marker == TTTGame::HUMAN_MARKER
+      if count_human_marker(@squares.values_at(*line)) == 3
         return TTTGame::HUMAN_MARKER
-      elsif @squares[line[0]].marker == TTTGame::COMPUTER_MARKER && @squares[line[1]].marker \
-        == TTTGame::COMPUTER_MARKER && @squares[line[2]].marker == TTTGame::COMPUTER_MARKER
+      elsif count_computer_marker(@squares.values_at(*line)) == 3
         return TTTGame::COMPUTER_MARKER
       end
     end
     nil
+  end
+
+  def reset
+    (1..9).each { |key| @squares[key] = Square.new }
   end
 end
 
@@ -85,6 +94,11 @@ class TTTGame
     @computer = Player.new(COMPUTER_MARKER)
   end
 
+  def clear
+    system 'clear'
+    system 'cls'
+  end
+
   def display_welcome_message
     puts 'Welcome to Tic Tac Toe!'
     puts
@@ -95,7 +109,6 @@ class TTTGame
   end
 
   def display_board
-    system 'clear'
     puts "You are #{human.marker}. Computer is #{computer.marker}."
     puts
     puts '     |     |'
@@ -129,9 +142,9 @@ class TTTGame
   end
 
   def display_result
-    display_board
+    clear_screen_and_display_board
 
-    case board.detect_winner
+    case board.winning_marker
     when human.marker
       puts "You won!"
     when computer.marker
@@ -141,20 +154,56 @@ class TTTGame
     end
   end
 
-  def play
-    display_welcome_message
+  def play_again?
+    answer = nil
+    loop do
+      puts "Would you like to play again? (y/n)"
+      answer = gets.chomp.downcase
+      break if %(y n).include?(answer)
+      puts "Invalid entry. Please enter y or n only."
+    end
+
+    answer == 'y'
+  end
+
+  def clear_screen_and_display_board
+    clear
     display_board
+  end
+
+  def reset
+    board.reset
+    clear
+  end
+
+  def display_play_again_message
+    puts "Let's play again!"
+    puts
+  end
+
+  def play
+    clear
+    display_welcome_message
 
     loop do
-      human_moves
-      break if board.someone_won? || board.full?
-
-      computer_moves
-      break if board.someone_won? || board.full?
-
       display_board
+
+      loop do
+        human_moves
+        break if board.someone_won? || board.full?
+
+        computer_moves
+        break if board.someone_won? || board.full?
+
+        clear_screen_and_display_board
+      end
+
+      display_result
+      break unless play_again?
+      reset
+      display_play_again_message
     end
-    display_result
+
     display_goodbye_message
   end
 end
