@@ -117,10 +117,15 @@ class TTTGame
   end
 
   def play
-    clear
-    assign_player_names
-    display_welcome_message
-    main_game
+    loop do
+      clear
+      assign_player_names
+      display_welcome_message
+      main_game
+      display_match_winner
+      play_again? ? play_continues : break
+    end
+
     display_goodbye_message
   end
 
@@ -131,7 +136,7 @@ class TTTGame
       display_board
       player_move
       determine_game_result
-      break unless play_again?
+      break if match_win?
       reset
       display_play_again_message
     end
@@ -156,7 +161,7 @@ class TTTGame
   end
 
   def display_welcome_message
-    puts 'Welcome to Tic Tac Toe!'
+    puts "\e[34mWelcome to Tic Tac Toe!\e[0m"
     puts
   end
 
@@ -166,7 +171,7 @@ class TTTGame
 
   def display_board
     puts "You are #{human.marker}. Computer is #{computer.marker}."
-    puts "Win 5 games to win the match!"
+    puts "Win five games to win the match!"
     puts
     display_scoreboard
     board.draw
@@ -174,8 +179,9 @@ class TTTGame
   end
 
   def display_scoreboard
-    puts "Match Score"
-    puts "#{human.name}: #{human.score}, #{computer.name}: #{computer.score}"
+    puts "\e[34mMatch Score\e[0m"
+    puts "\e[32m#{human.name}:\e[0m #{human.score} | " \
+         "\e[32m#{computer.name}:\e[0m #{computer.score}"
     puts
   end
 
@@ -227,12 +233,13 @@ class TTTGame
 
     case result
     when 'human'
-      puts "#{human.name} won!"
+      puts "\e[32m#{human.name} won!\e[0m"
     when 'computer'
-      puts "#{computer.name} won!"
+      puts "\e[32m#{computer.name} won!\e[0m"
     else
-      puts "It's a tie!"
+      puts "\e[32mIt's a tie!\e[0m"
     end
+    sleep 1.75
   end
 
   def determine_game_result
@@ -248,10 +255,23 @@ class TTTGame
     end
   end
 
+  def match_win?
+    human.score == 5 || computer.score == 5
+  end
+
+  def display_match_winner
+    if human.score == 5
+      puts "#{human.name} wins the match!"
+    else
+      puts "#{computer.name} wins the match!"
+    end
+    puts
+  end
+
   def play_again?
     answer = nil
     loop do
-      puts "Would you like to play again? (y/n)"
+      puts "\nGame Over! Start a new match? (y/n)"
       answer = gets.chomp.downcase
       break if %w(y n).include?(answer)
       puts "Invalid entry. Please enter y or n only."
@@ -271,14 +291,14 @@ class TTTGame
     clear
   end
 
-  def reset_scoreboard
-    human.score = 0
-    computer.score = 0
+  def display_play_again_message
+    puts "\e[34mThe match continues! Let's play again!\e[0m"
+    puts
   end
 
-  def display_play_again_message
-    puts "Let's play again!"
-    puts
+  def play_continues
+    game = TTTGame.new
+    game.play
   end
 end
 
