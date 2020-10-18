@@ -2,6 +2,74 @@
 
 require 'pry'
 
+module Displayable
+
+  private
+
+  def clear
+    system 'clear'
+    system 'cls'
+  end
+
+  def clear_screen_and_display_board
+    clear
+    display_board
+  end
+
+  def display_welcome_message
+    puts "\e[34mWelcome to Tic Tac Toe!\e[0m"
+    puts
+  end
+
+  def display_goodbye_message
+    puts 'Thank you for playing Tic Tac Toe. Goodbye!'
+  end
+
+  def display_scoreboard
+    puts "\e[34mMatch Score\e[0m"
+    puts "\e[32m#{human.name}:\e[0m #{human.score} | " \
+         "\e[32m#{computer.name}:\e[0m #{computer.score}"
+    puts
+  end
+
+  def display_board
+    puts "You are #{human.marker}. Computer is #{computer.marker}."
+    puts "Win #{TTTGame::MATCH_GAMES} games to win the match!"
+    puts
+    display_scoreboard
+    board.draw
+    puts
+  end
+
+  def display_match_winner
+    if human.score == TTTGame::MATCH_GAMES
+      puts "#{human.name} wins the match!"
+    else
+      puts "#{computer.name} wins the match!"
+    end
+    puts
+  end
+
+  def display_play_again_message
+    puts "\e[34mThe match continues! Let's play again!\e[0m"
+    puts
+  end
+
+  def display_result(result)
+    clear_screen_and_display_board
+
+    case result
+    when 'human'
+      puts "\e[32m#{human.name} won!\e[0m"
+    when 'computer'
+      puts "\e[32m#{computer.name} won!\e[0m"
+    else
+      puts "\e[32mIt's a tie!\e[0m"
+    end
+    sleep 1.75
+  end
+end
+
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
@@ -102,6 +170,8 @@ class Player
 end
 
 class TTTGame
+  include Displayable
+
   FIRST_TO_MOVE = 'X'
   MATCH_GAMES = 5
 
@@ -141,11 +211,6 @@ class TTTGame
     end
   end
 
-  def clear
-    system 'clear'
-    system 'cls'
-  end
-
   def assign_player_names
     n = ''
     loop do
@@ -175,31 +240,6 @@ class TTTGame
     human.marker = m
     computer.marker = 'O' if m == 'X'
     computer.marker = 'X' if m == 'O'
-  end
-
-  def display_welcome_message
-    puts "\e[34mWelcome to Tic Tac Toe!\e[0m"
-    puts
-  end
-
-  def display_goodbye_message
-    puts 'Thank you for playing Tic Tac Toe. Goodbye!'
-  end
-
-  def display_board
-    puts "You are #{human.marker}. Computer is #{computer.marker}."
-    puts "Win #{MATCH_GAMES} games to win the match!"
-    puts
-    display_scoreboard
-    board.draw
-    puts
-  end
-
-  def display_scoreboard
-    puts "\e[34mMatch Score\e[0m"
-    puts "\e[32m#{human.name}:\e[0m #{human.score} | " \
-         "\e[32m#{computer.name}:\e[0m #{computer.score}"
-    puts
   end
 
   def current_player_moves
@@ -245,20 +285,6 @@ class TTTGame
     board.[]=(board.unmarked_keys.sample, computer.marker)
   end
 
-  def display_result(result)
-    clear_screen_and_display_board
-
-    case result
-    when 'human'
-      puts "\e[32m#{human.name} won!\e[0m"
-    when 'computer'
-      puts "\e[32m#{computer.name} won!\e[0m"
-    else
-      puts "\e[32mIt's a tie!\e[0m"
-    end
-    sleep 1.75
-  end
-
   def determine_game_result
     case board.winning_marker
     when human.marker
@@ -276,15 +302,6 @@ class TTTGame
     human.score == MATCH_GAMES || computer.score == MATCH_GAMES
   end
 
-  def display_match_winner
-    if human.score == MATCH_GAMES
-      puts "#{human.name} wins the match!"
-    else
-      puts "#{computer.name} wins the match!"
-    end
-    puts
-  end
-
   def play_again?
     answer = nil
     loop do
@@ -297,20 +314,10 @@ class TTTGame
     answer == 'y'
   end
 
-  def clear_screen_and_display_board
-    clear
-    display_board
-  end
-
   def reset
     board.reset
     @current_marker = FIRST_TO_MOVE
     clear
-  end
-
-  def display_play_again_message
-    puts "\e[34mThe match continues! Let's play again!\e[0m"
-    puts
   end
 
   def reset_scoreboard
