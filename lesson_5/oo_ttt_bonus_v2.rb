@@ -1,4 +1,4 @@
-# oo_ttt_bonus.rb
+# oo_ttt_bonus_v2.rb
 
 require 'pry'
 
@@ -92,10 +92,9 @@ class Square
 end
 
 class Player
-  attr_reader :marker
-  attr_accessor :name, :score
+  attr_accessor :name, :score, :marker
 
-  def initialize(marker)
+  def initialize
     @marker = marker
     @name = name
     @score = 0
@@ -103,24 +102,22 @@ class Player
 end
 
 class TTTGame
-  HUMAN_MARKER = 'X'
-  COMPUTER_MARKER = 'O'
-  FIRST_TO_MOVE = HUMAN_MARKER
+  FIRST_TO_MOVE = 'X'
 
   attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
+    @human = Player.new
+    @computer = Player.new
     @current_marker = FIRST_TO_MOVE
   end
 
   def play
+    clear
+    assign_player_names
+    choose_player_marker
     loop do
-      clear
-      assign_player_names
-      # choose_player_marker
       display_welcome_message
       main_game
       display_match_winner
@@ -174,7 +171,9 @@ class TTTGame
   end
 
   def assign_player_markers(m)
-    # code
+    human.marker = m
+    computer.marker = 'O' if m == 'X'
+    computer.marker = 'X' if m == 'O'
   end
 
   def display_welcome_message
@@ -205,15 +204,15 @@ class TTTGame
   def current_player_moves
     if human_turn?
       human_moves
-      @current_marker = COMPUTER_MARKER
+      @current_marker = computer.marker
     else
       computer_moves
-      @current_marker = HUMAN_MARKER
+      @current_marker = human.marker
     end
   end
 
   def human_turn?
-    @current_marker == HUMAN_MARKER
+    @current_marker == human.marker
   end
 
   def player_move
@@ -313,11 +312,15 @@ class TTTGame
     puts
   end
 
+  def reset_scoreboard
+    human.score = 0
+    computer.score = 0
+  end
+
   def play_continues
-    game = TTTGame.new
-    game.play
+    reset
+    reset_scoreboard
   end
 end
 
-game = TTTGame.new
-game.play
+TTTGame.new.play
