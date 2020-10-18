@@ -103,6 +103,7 @@ end
 
 class TTTGame
   FIRST_TO_MOVE = 'X'
+  MATCH_GAMES = 5
 
   attr_reader :board, :human, :computer
 
@@ -187,7 +188,7 @@ class TTTGame
 
   def display_board
     puts "You are #{human.marker}. Computer is #{computer.marker}."
-    puts "Win five games to win the match!"
+    puts "Win #{MATCH_GAMES} games to win the match!"
     puts
     display_scoreboard
     board.draw
@@ -272,11 +273,11 @@ class TTTGame
   end
 
   def match_win?
-    human.score == 5 || computer.score == 5
+    human.score == MATCH_GAMES || computer.score == MATCH_GAMES
   end
 
   def display_match_winner
-    if human.score == 5
+    if human.score == MATCH_GAMES
       puts "#{human.name} wins the match!"
     else
       puts "#{computer.name} wins the match!"
