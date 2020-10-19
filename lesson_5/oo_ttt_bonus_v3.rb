@@ -303,7 +303,11 @@ class TTTGame
   end
 
   def computer_moves
-    board.[]=(board.unmarked_keys.sample, computer.marker)
+    if board.unmarked_keys.include?(5)
+      board.[]=(5, computer.marker) # square 5 if available
+    else
+      board.[]=(board.unmarked_keys.sample, computer.marker) # select random
+    end
   end
 
   def determine_game_result
