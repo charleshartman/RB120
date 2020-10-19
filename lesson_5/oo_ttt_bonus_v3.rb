@@ -209,6 +209,10 @@ class Computer < Player
   def choose_marker(other_marker)
     self.marker = (other_marker == 'X' ? 'O' : 'X')
   end
+
+  def center(board)
+    5 if board.unmarked_keys.include?(5)
+  end
 end
 
 class TTTGame
@@ -303,11 +307,9 @@ class TTTGame
   end
 
   def computer_moves
-    if board.unmarked_keys.include?(5)
-      board.[]=(5, computer.marker) # square 5 if available
-    else
-      board.[]=(board.unmarked_keys.sample, computer.marker) # select random
-    end
+    mark = computer.center(board) || board.unmarked_keys.sample
+
+    board.[]=(mark, computer.marker)
   end
 
   def determine_game_result
