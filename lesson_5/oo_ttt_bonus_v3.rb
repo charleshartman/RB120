@@ -294,16 +294,20 @@ class TTTGame
     (keys[0..-2].join(', ')) + ' or ' + keys.last.to_s
   end
 
+  def valid_square_choice?(square)
+    square.to_i.to_s == square && board.unmarked_keys.include?(square.to_i)
+  end
+
   def human_moves
     square = nil
     puts "Choose a square (#{joinor(board.unmarked_keys)}): "
     loop do
-      square = gets.chomp.to_i
-      break if board.unmarked_keys.include?(square)
+      square = gets.chomp
+      break if valid_square_choice?(square)
       puts "I'm sorry, that is not a valid choice."
     end
 
-    board.[]=(square, human.marker)
+    board.[]=(square.to_i, human.marker)
   end
 
   def computer_moves
