@@ -1,5 +1,7 @@
 # oo_ttt_bonus_v3.rb
 
+require 'pry'
+
 module Displayable
   private
 
@@ -213,6 +215,10 @@ class Computer < Player
   def center(board)
     5 if board.unmarked_keys.include?(5)
   end
+
+  def defensive_move(board); end
+
+  def offensive_move(board); end
 end
 
 class TTTGame
@@ -311,7 +317,8 @@ class TTTGame
   end
 
   def computer_moves
-    mark = computer.center(board) || board.unmarked_keys.sample
+    mark = computer.offensive_move(board) || computer.defensive_move(board) ||
+           computer.center(board) || board.unmarked_keys.sample
 
     board.[]=(mark, computer.marker)
   end
