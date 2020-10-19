@@ -69,9 +69,9 @@ module Displayable
     clear_screen_and_display_board
 
     case result
-    when 'human'
+    when :human
       puts "\e[32m#{human.name} won!\e[0m"
-    when 'computer'
+    when :computer
       puts "\e[32m#{computer.name} won!\e[0m"
     else
       puts "\e[32mIt's a tie!\e[0m"
@@ -326,13 +326,22 @@ class TTTGame
   def determine_game_result
     case board.winning_marker
     when human.marker
-      human.score += 1
-      display_result('human')
+      increment_score(:human)
+      display_result(:human)
     when computer.marker
-      computer.score += 1
-      display_result('computer')
+      increment_score(:computer)
+      display_result(:computer)
     else
-      display_result('tie')
+      display_result(:tie)
+    end
+  end
+
+  def increment_score(player)
+    case player
+    when :human
+      human.score += 1
+    when :computer
+      computer.score += 1
     end
   end
 
