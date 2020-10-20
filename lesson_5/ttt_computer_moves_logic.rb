@@ -35,7 +35,6 @@ end
 [11] pry(#<Computer>)> line.select { |num| board[num] == 'X' }.first
 => 1
 
-
 [19] pry(#<Computer>)> self.marker
 => "O"
 
