@@ -94,6 +94,10 @@ class Board
     @squares[num].marker = marker
   end
 
+  def [](num)
+    @squares[num].marker
+  end
+
   def unmarked_keys
     @squares.keys.select { |key| @squares[key].unmarked? }
   end
@@ -212,13 +216,33 @@ class Computer < Player
     self.marker = (other_marker == 'X' ? 'O' : 'X')
   end
 
+  def opponent_marker
+    marker == 'X' ? 'O' : 'X'
+  end
+
   def center(board)
     5 if board.unmarked_keys.include?(5)
   end
 
-  def defensive_move(board); end
+  def defensive_move(board)
+    Board::WINNING_LINES.each do |line|
+      if line.count { |num| board[num] == opponent_marker } == 2 &&
+         line.count { |num| board[num] == ' ' } == 1
+        return line.select { |num| board[num] == ' ' }.first
+      end
+    end
+    nil
+  end
 
-  def offensive_move(board); end
+  def offensive_move(board)
+    Board::WINNING_LINES.each do |line|
+      if line.count { |num| board[num] == marker } == 2 &&
+         line.count { |num| board[num] == ' ' } == 1
+        return line.select { |num| board[num] == ' ' }.first
+      end
+    end
+    nil
+  end
 end
 
 class TTTGame
@@ -317,7 +341,8 @@ class TTTGame
   end
 
   def computer_moves
-    mark = computer.offensive_move(board) || computer.defensive_move(board) ||
+    mark = computer.offensive_move(board) ||
+           computer.defensive_move(board) ||
            computer.center(board) || board.unmarked_keys.sample
 
     board.[]=(mark, computer.marker)
