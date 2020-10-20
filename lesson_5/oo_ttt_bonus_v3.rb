@@ -1,7 +1,5 @@
 # oo_ttt_bonus_v3.rb
 
-require 'pry'
-
 module Displayable
   private
 
@@ -76,7 +74,7 @@ module Displayable
     else
       puts "\e[32mIt's a tie!\e[0m"
     end
-    sleep 1.75
+    sleep 2.00
   end
 end
 
@@ -216,11 +214,7 @@ class Computer < Player
     self.marker = (other_marker == 'X' ? 'O' : 'X')
   end
 
-  def opponent_marker
-    marker == 'X' ? 'O' : 'X'
-  end
-
-  def center(board)
+  def center_move(board)
     5 if board.unmarked_keys.include?(5)
   end
 
@@ -242,6 +236,12 @@ class Computer < Player
       end
     end
     nil
+  end
+
+  private
+
+  def opponent_marker
+    marker == 'X' ? 'O' : 'X'
   end
 end
 
@@ -341,9 +341,8 @@ class TTTGame
   end
 
   def computer_moves
-    mark = computer.offensive_move(board) ||
-           computer.defensive_move(board) ||
-           computer.center(board) || board.unmarked_keys.sample
+    mark = computer.offensive_move(board) || computer.defensive_move(board) ||
+           computer.center_move(board) || board.unmarked_keys.sample
 
     board.[]=(mark, computer.marker)
   end
@@ -361,8 +360,8 @@ class TTTGame
     end
   end
 
-  def increment_score(player)
-    case player
+  def increment_score(winner)
+    case winner
     when :human
       human.score += 1
     when :computer
