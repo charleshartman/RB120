@@ -277,6 +277,7 @@ end
 class TTTGame
   include Displayable
 
+  FIRST_TO_MOVE = :random # choose :random, :human, :computer
   MATCH_GAMES = 5
 
   attr_reader :board, :human, :computer
@@ -285,7 +286,6 @@ class TTTGame
     @board = Board.new
     @human = Human.new
     @computer = Computer.new
-    @current_marker = first_to_move
   end
 
   def play
@@ -303,6 +303,8 @@ class TTTGame
   end
 
   private
+
+  attr_writer :current_marker
 
   def main_game
     loop do
@@ -323,6 +325,7 @@ class TTTGame
   def assign_player_markers
     human.choose_marker
     computer.choose_marker(human.marker)
+    @current_marker = first_to_move
   end
 
   def current_player_moves
@@ -399,7 +402,11 @@ class TTTGame
   end
 
   def first_to_move
-    %w(X O).sample
+    case FIRST_TO_MOVE
+    when :random then %w(X O).sample
+    when :human then human.marker
+    when :computer then computer.marker
+    end
   end
 
   def reset_board
