@@ -203,6 +203,29 @@ class Human < Player
     end
     self.marker = m
   end
+
+  def choose_move(board)
+    square = nil
+    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
+    loop do
+      square = gets.chomp
+      break if valid_square_choice?(square, board)
+      puts "I'm sorry, that is not a valid choice."
+    end
+
+    square
+  end
+
+  private
+
+  def joinor(keys)
+    return keys.first.to_s if keys.size == 1
+    (keys[0..-2].join(', ')) + ' or ' + keys.last.to_s
+  end
+
+  def valid_square_choice?(square, board)
+    square.to_i.to_s == square && board.unmarked_keys.include?(square.to_i)
+  end
 end
 
 class Computer < Player
@@ -319,23 +342,8 @@ class TTTGame
     end
   end
 
-  def joinor(keys)
-    return keys.first.to_s if keys.size == 1
-    (keys[0..-2].join(', ')) + ' or ' + keys.last.to_s
-  end
-
-  def valid_square_choice?(square)
-    square.to_i.to_s == square && board.unmarked_keys.include?(square.to_i)
-  end
-
   def human_moves
-    square = nil
-    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
-    loop do
-      square = gets.chomp
-      break if valid_square_choice?(square)
-      puts "I'm sorry, that is not a valid choice."
-    end
+    square = human.choose_move(board)
 
     board.[]=(square.to_i, human.marker)
   end
