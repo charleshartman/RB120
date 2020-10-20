@@ -45,11 +45,19 @@ module Displayable
   def display_board
     puts "You are #{human.marker}. Computer is #{computer.marker}."
     puts "Win #{TTTGame::MATCH_GAMES} games to win the match!"
-    puts "First to move each game is randomly selected."
+    puts "First player to move each game is: #{display_first_mover}."
     puts
     display_scoreboard
     board.draw
     puts
+  end
+
+  def display_first_mover
+    case TTTGame::FIRST_TO_MOVE
+    when :random then 'randomly selected'
+    when :human then 'human'
+    when :computer then 'computer'
+    end
   end
 
   def display_match_winner
