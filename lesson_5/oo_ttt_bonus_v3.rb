@@ -242,16 +242,16 @@ class Computer < Player
   end
 
   def defensive_move(board)
-    Board::WINNING_LINES.each do |line|
-      if line.count { |num| board[num] == opponent_marker } == 2 &&
-         line.count { |num| board[num] == ' ' } == 1
-        return line.select { |num| board[num] == ' ' }.first
-      end
-    end
-    nil
+    find_move(board, opponent_marker)
   end
 
   def offensive_move(board)
+    find_move(board, marker)
+  end
+
+  private
+
+  def find_move(board, marker)
     Board::WINNING_LINES.each do |line|
       if line.count { |num| board[num] == marker } == 2 &&
          line.count { |num| board[num] == ' ' } == 1
@@ -260,8 +260,6 @@ class Computer < Player
     end
     nil
   end
-
-  private
 
   def opponent_marker
     marker == 'X' ? 'O' : 'X'
