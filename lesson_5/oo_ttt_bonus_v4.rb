@@ -318,6 +318,7 @@ class TTTGame
     loop do
       display_board
       player_move
+      increment_score
       determine_game_result
       break if match_win?
       reset_board
@@ -374,21 +375,19 @@ class TTTGame
   def determine_game_result
     case board.winning_marker
     when human.marker
-      increment_score(:human)
       display_result(:human)
     when computer.marker
-      increment_score(:computer)
       display_result(:computer)
     else
       display_result(:tie)
     end
   end
 
-  def increment_score(winner)
-    case winner
-    when :human
+  def increment_score
+    case board.winning_marker
+    when human.marker
       human.score += 1
-    when :computer
+    when computer.marker
       computer.score += 1
     end
   end
