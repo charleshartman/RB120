@@ -10,6 +10,10 @@ module Blackjack
   SYMBOLS = { "S" => "\u2660", "H" => "\u2665", "D" => "\u2666",
               "C" => "\u2663" }
 
+  VALUES = { 'Ace' => 11, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6,
+             '7' => 7, '8' => 8, '9' => 9, '10' => 10, "Jack" => 10,
+             'Queen' => 10, 'King' => 10 }
+
   # set to determine how many games win the match
   MATCH_GAMES = 5
   # set these to modify gameplay parameters, 21 and 17 are traditional
@@ -41,7 +45,7 @@ module Hand
 end
 
 class Participant
-  include Hand
+  include Blackjack
 
   attr_accessor :name, :hand, :hand_total, :match_score
 
@@ -50,6 +54,24 @@ class Participant
     @hand = []
     @hand_total = 0
     @match_score = 0
+  end
+
+  def reset_hand
+    self.hand = []
+  end
+
+  def reset_hand_total
+    self.hand_total = 0
+  end
+
+  def total
+    values = hand.map { |card| card[1] }
+    total = 0
+    hand.each { |val| total += VALUES[val[1]] }
+    values.select { |val| val == 'Ace' }.count.times do
+      total -= 10 if total > HIGH_SCORE
+    end
+    total
   end
 end
 
@@ -64,30 +86,12 @@ class Player < Participant
     end
     self.name = n.squeeze(' ')
   end
-
-  def hit; end
-
-  def stay; end
-
-  def busted?; end
-
-  def total
-    # definitely looks like we need to know about "cards" to produce some total
-  end
 end
 
 class Dealer < Participant
   def set_name
     self.name = %w(Jack Emily Conan Joan Seth).sample
   end
-
-  def hit; end
-
-  def stay; end
-
-  def busted?; end
-
-  def total; end
 end
 
 class Deck
@@ -119,12 +123,6 @@ class Deck
   end
 end
 
-class Card
-  def initialize
-    # what are the "states" of a card?
-  end
-end
-
 class TwentyOneGame
   include Blackjack
 
@@ -136,29 +134,41 @@ class TwentyOneGame
   end
 
   def play
-    display_initial_welcome
+    display_onboarding_hello
     assign_participant_names
     display_introduction_names
+    loop do
+      display_welcome_message
+      main_game
+      break
+      # display_match_winner
+      # play_again? ? play_continues : break
+    end
+
+    display_goodbye_message
   end
 
   def main_game
     deal_cards
     # check_state
     show_initial_cards
-    # player_turn
+    player_turn
     # dealer_turn
     # show_result
+    # break if match_win?
+    # reset_game
   end
 
   def deal_cards
     @deck = Deck.new
+    display_new_round
     player.hand.concat(deck.deal(2))
     dealer.hand.concat(deck.deal(2))
   end
 
   def show_initial_cards
-    puts_purple(starting_hand_hidden)
-    puts_purple(starting_hand_visible)
+    puts starting_hand_hidden
+    puts starting_hand_visible
   end
 
   def starting_hand_hidden
@@ -171,7 +181,15 @@ class TwentyOneGame
        "and [#{player.hand[1][1]} of #{SYMBOLS[player.hand[1][0]]}].\n\n"
   end
 
-  def display_initial_welcome
+  def display_onboarding_hello
+    clear_screen
+    prompt_purple("Twenty-One Game Setup...")
+    sleep 1.25
+    prompt_purple("Just a few questions before we begin...")
+    sleep 1.25
+  end
+
+  def display_welcome_message
     clear_screen
     puts ''
     prompt_green("Welcome to '#{HIGH_SCORE}' inspired by [Blackjack].\n")
@@ -182,19 +200,82 @@ class TwentyOneGame
     STDIN.getch
   end
 
+  def display_goodbye_message
+    prompt_green("Thank you for playing '#{HIGH_SCORE}'. Goodbye.")
+  end
+
   def assign_participant_names
-    clear_screen
     player.set_name
     dealer.set_name
   end
 
   def display_introduction_names
+    puts ''
+    prompt_green("Welcome, #{player.name}!")
+    prompt_green("Your dealer today is #{dealer.name}.\n")
+    prompt_green("Let's get started...\n")
+    continue
+  end
+
+  def display_new_round
     clear_screen
     puts ''
-    prompt_green("Welcome, #{player.name}!\n")
-    prompt_green("Your dealer's name is #{dealer.name}.\n")
-    prompt_green("Let the games begin!\n")
-    continue
+    prompt_green("Shuffling...")
+    sleep 1.50
+    prompt_green("Dealing...\n")
+    sleep 1.00
+  end
+
+  def player_turn
+    loop do
+      answer = player_hit_or_stay
+      if answer == 'h'
+        hit(player)
+        player.hand_total = player.total
+        display_hand_total(player)
+      end
+
+      break if answer == 's' # || busted?(player_total)
+    end
+  end
+
+  def player_hit_or_stay
+    choice = ''
+    loop do
+      prompt_purple("Would you like to (h)it or (s)tay?")
+      choice = gets.chomp.downcase
+      break if choice == 's' || choice == 'h'
+      puts "=> Invalid input, you must enter 'h' or 's'.\n\n"
+    end
+    choice
+  end
+
+  def hit(who)
+    prompt_green("#{who.name} hits...")
+    sleep 1.00
+    who.hand.concat(deck.deal)
+    puts "#{who.name} is dealt [#{who.hand[-1][1]} of " \
+         "#{SYMBOLS[who.hand[-1][0]]}]"
+  end
+
+  def stay; end
+
+  def busted?; end
+
+  def display_hand_total(who)
+    puts "The total of the #{who.name}'s hand is #{who.hand_total}.\n\n"
+    sleep 0.75
+  end
+
+  def reset_game
+    player.reset_hand
+    dealer.reset_hand
+    player.reset_hand_total
+    dealer.reset_hand_total
+  end
+
+  def match_win?
+    player.match_score == MATCH_GAMES || dealer.match_score == MATCH_GAMES
   end
 
   def check_state
