@@ -33,7 +33,7 @@ module Blackjack
     puts "\e[32m#{msg}\e[0m"
   end
 
-  def continue
+  def continue_prompt
     print "\e[34m[Press any key to continue]\e[0m"
     STDIN.getch
     print "                            \r"
@@ -43,7 +43,8 @@ end
 class Participant
   include Blackjack
 
-  attr_accessor :name, :hand, :hand_total, :match_score
+  attr_accessor :name, :hand, :match_score
+  attr_writer :total
 
   def initialize
     @name = name
@@ -90,6 +91,11 @@ class Participant
     end
     puts ''
   end
+
+  def display_total
+    puts "The total of the #{name}'s hand is #{total}.\n\n"
+    sleep 0.75
+  end
 end
 
 class Player < Participant
@@ -107,7 +113,8 @@ end
 
 class Dealer < Participant
   def set_name
-    self.name = %w(Jack Emily Conan Joan Seth).sample
+    # Dealer name is not hard coded, which allows for future options/changes
+    self.name = 'Dealer'
   end
 end
 
@@ -153,7 +160,6 @@ class TwentyOneGame
   def play
     display_onboarding_hello
     assign_participant_names
-    display_introduction_names
     loop do
       display_welcome_message
       main_game
@@ -166,15 +172,17 @@ class TwentyOneGame
   end
 
   def main_game
-    deal_cards
-    # check_state
-    show_initial_cards
-    player_turn
-    banner
-    # dealer_turn
-    # show_result
-    # break if match_win?
-    # reset_game
+    loop do
+      deal_cards
+      show_initial_cards
+      player_turn
+      dealer_turn
+      banner
+      continue_prompt
+      # show_result
+      break if match_win?
+      reset_game
+    end
   end
 
   def deal_cards
@@ -201,9 +209,8 @@ class TwentyOneGame
 
   def display_onboarding_hello
     clear_screen
+    puts ''
     prompt_purple("Twenty-One Game Setup...")
-    sleep 1.25
-    prompt_purple("Just a quick question before we begin...")
     sleep 1.25
   end
 
@@ -213,7 +220,7 @@ class TwentyOneGame
     prompt_green("Welcome to '#{HIGH_SCORE}' inspired by [Blackjack].\n")
     prompt_green("Single Deck Shoe. Dealer must HIT below #{DEALER_HITS_TO}.")
     prompt_green("First to Win #{MATCH_GAMES} Hands Wins the Match!\n")
-    prompt_green("Good Luck!\n")
+    prompt_green("Good Luck, #{player.name}!\n")
     prompt_purple("[Press any key to begin]")
     STDIN.getch
   end
@@ -225,14 +232,6 @@ class TwentyOneGame
   def assign_participant_names
     player.set_name
     dealer.set_name
-  end
-
-  def display_introduction_names
-    puts ''
-    prompt_green("Welcome, #{player.name}!")
-    prompt_green("Your dealer today is #{dealer.name}.\n")
-    prompt_green("Let's get started...\n")
-    continue
   end
 
   def display_new_round
@@ -249,7 +248,7 @@ class TwentyOneGame
       answer = player_hit_or_stay
       if answer == 'h'
         hit(player)
-        display_hand_total(player)
+        player.display_total
       end
 
       break if answer == 's' || player.busted?
@@ -258,12 +257,24 @@ class TwentyOneGame
     bust_or_stay(player)
   end
 
+  def dealer_turn
+    dealer_reveals
+
+    loop do
+      break if dealer.total >= DEALER_HITS_TO
+
+      hit(dealer)
+      dealer.display_total
+    end
+
+    bust_or_stay(dealer)
+  end
+
   def bust_or_stay(who)
     if who.busted?
-      # banner(dealer_hand, player_hand, dealer_total, player_total, scoreboard)
-      # continue_playing?
-      # match_won?(scoreboard) ? break : next
-      puts "busted, dude."
+      prompt_green("#{who.name} busted!")
+      continue_prompt
+      # match_won? ? break : next
     else
       who.stay
     end
@@ -288,9 +299,12 @@ class TwentyOneGame
          "#{SYMBOLS[who.hand[-1][0]]}]"
   end
 
-  def display_hand_total(who)
-    puts "The total of the #{who.name}'s hand is #{who.total}.\n\n"
-    sleep 0.75
+  def dealer_reveals
+    prompt_green("#{dealer.name} reveals hidden card...")
+    sleep 1.00
+    dealer.display_hand
+    dealer.display_total
+    sleep 1.00
   end
 
   def display_current_score
@@ -306,9 +320,42 @@ class TwentyOneGame
   def banner
     display_current_hand
     display_current_score
-    # report_result(dealer_total, player_total)
-    # increment_scoreboard(dealer_total, player_total, scoreboard)
-    # print_scoreboard(scoreboard)
+    report_result
+    increment_match_score
+    display_match_score
+  end
+
+  def who_wins?
+    if player.total > HIGH_SCORE then :player_bust
+    elsif dealer.total > HIGH_SCORE then :dealer_bust
+    elsif dealer.total > player.total then :dealer
+    elsif player.total > dealer.total then :player
+    else :push
+    end
+  end
+
+  def report_result
+    result = who_wins?
+
+    case result
+    when :player_bust then prompt_green("Player busted! Dealer wins!\n")
+    when :dealer_bust then prompt_green("Dealer busted! Player wins!\n")
+    when :player then prompt_green("Player wins!\n")
+    when :dealer then prompt_green("Dealer wins!\n")
+    when :push then prompt_green("Hand is tied, push!\n")
+    end
+  end
+
+  def increment_match_score
+    result = who_wins?
+
+    dealer.match_score += 1 if result == :player_bust || result == :dealer
+    player.match_score += 1 if result == :dealer_bust || result == :player
+  end
+
+  def display_match_score
+    prompt_green("Match score -> Player: #{player.match_score} " \
+                 "Dealer: #{dealer.match_score}  (Score 5 to Win the Match!)\n")
   end
 
   def reset_game
