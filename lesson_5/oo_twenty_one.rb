@@ -40,10 +40,6 @@ module Blackjack
   end
 end
 
-module Hand
-  # code
-end
-
 class Participant
   include Blackjack
 
@@ -52,7 +48,7 @@ class Participant
   def initialize
     @name = name
     @hand = []
-    @hand_total = 0
+    @total = 0
     @match_score = 0
   end
 
@@ -60,8 +56,21 @@ class Participant
     self.hand = []
   end
 
-  def reset_hand_total
-    self.hand_total = 0
+  def reset_total
+    self.total = 0
+  end
+
+  def busted?
+    total > HIGH_SCORE
+  end
+
+  def stay
+    sleep 1.50 # comment this out if you uncomment next line
+    # continue_playing?
+    # ^^^ you can you this instead of sleep for a slower, read
+    # all the cards and calculations carefully experience
+    clear_screen
+    prompt_green("#{name} stays with #{total}.\n")
   end
 
   def total
@@ -72,6 +81,14 @@ class Participant
       total -= 10 if total > HIGH_SCORE
     end
     total
+  end
+
+  def display_hand
+    print "#{name}'s hand: "
+    hand.each do |card|
+      print "[#{SYMBOLS[card[0]]} #{card[1]} #{SYMBOLS[card[0]]}]  "
+    end
+    puts ''
   end
 end
 
@@ -153,6 +170,7 @@ class TwentyOneGame
     # check_state
     show_initial_cards
     player_turn
+    banner
     # dealer_turn
     # show_result
     # break if match_win?
@@ -185,7 +203,7 @@ class TwentyOneGame
     clear_screen
     prompt_purple("Twenty-One Game Setup...")
     sleep 1.25
-    prompt_purple("Just a few questions before we begin...")
+    prompt_purple("Just a quick question before we begin...")
     sleep 1.25
   end
 
@@ -231,11 +249,23 @@ class TwentyOneGame
       answer = player_hit_or_stay
       if answer == 'h'
         hit(player)
-        player.hand_total = player.total
         display_hand_total(player)
       end
 
-      break if answer == 's' # || busted?(player_total)
+      break if answer == 's' || player.busted?
+    end
+
+    bust_or_stay(player)
+  end
+
+  def bust_or_stay(who)
+    if who.busted?
+      # banner(dealer_hand, player_hand, dealer_total, player_total, scoreboard)
+      # continue_playing?
+      # match_won?(scoreboard) ? break : next
+      puts "busted, dude."
+    else
+      who.stay
     end
   end
 
@@ -258,20 +288,34 @@ class TwentyOneGame
          "#{SYMBOLS[who.hand[-1][0]]}]"
   end
 
-  def stay; end
-
-  def busted?; end
-
   def display_hand_total(who)
-    puts "The total of the #{who.name}'s hand is #{who.hand_total}.\n\n"
+    puts "The total of the #{who.name}'s hand is #{who.total}.\n\n"
     sleep 0.75
+  end
+
+  def display_current_score
+    puts "#{dealer.name}'s total is #{dealer.total}, #{player.name}'s total " \
+         "is #{player.total}.\n\n"
+  end
+
+  def display_current_hand
+    dealer.display_hand
+    player.display_hand
+  end
+
+  def banner
+    display_current_hand
+    display_current_score
+    # report_result(dealer_total, player_total)
+    # increment_scoreboard(dealer_total, player_total, scoreboard)
+    # print_scoreboard(scoreboard)
   end
 
   def reset_game
     player.reset_hand
     dealer.reset_hand
-    player.reset_hand_total
-    dealer.reset_hand_total
+    player.reset_total
+    dealer.reset_total
   end
 
   def match_win?
