@@ -76,10 +76,7 @@ class Participant
   end
 
   def stay
-    sleep 1.50 # comment this out if you uncomment next line
-    # continue_playing?
-    # ^^^ you can you this instead of sleep for a slower, read
-    # all the cards and calculations carefully experience
+    sleep 1.00
     clear_screen
     prompt_green("#{name} stays with #{total}.\n")
   end
@@ -123,7 +120,6 @@ end
 
 class Dealer < Participant
   def set_name
-    # Dealer name is not hard coded, which allows for future options/changes
     self.name = 'Dealer'
   end
 end
@@ -146,10 +142,6 @@ class Deck
     end
 
     cards.shuffle!
-  end
-
-  def size
-    cards.size
   end
 
   def deal(num = 1)
@@ -180,12 +172,12 @@ class TwentyOneGame
     display_goodbye_message
   end
 
+  private
+
   def main_game
     loop do
       deal_cards
       show_initial_cards
-      # player_turn
-      # dealer_turn
       take_turns
       display_all_stats
       continue_prompt
@@ -256,7 +248,7 @@ class TwentyOneGame
     clear_screen
     puts ''
     prompt_green("Shuffling...")
-    sleep 1.50
+    sleep 1.25
     prompt_green("Dealing...\n")
     sleep 1.00
   end
@@ -329,7 +321,7 @@ class TwentyOneGame
     if player.match_score == 5
       prompt_green("#{player.name} has won five rounds! " \
         "#{player.name} wins the match!\n")
-      prompt_purple("Blackjack Bunnie '#{HIGH_SCORE}' says 'Good Job!'")
+      prompt_purple("Bunnie '#{HIGH_SCORE}' says 'Good Job!'")
       blackjack_bunnie
     elsif dealer.match_score == 5
       prompt_green("#{dealer.name} has won five rounds! " \
@@ -385,7 +377,8 @@ class TwentyOneGame
 
   def display_match_score
     prompt_green("Match score -> #{player.name}: #{player.match_score} | " \
-      "#{dealer.name}: #{dealer.match_score}  (Score 5 to Win the Match!)\n")
+      "#{dealer.name}: #{dealer.match_score}  (Take #{MATCH_GAMES} games to " \
+      "win the match!)\n")
   end
 
   def reset_game
