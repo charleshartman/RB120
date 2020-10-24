@@ -38,6 +38,16 @@ module Blackjack
     STDIN.getch
     print "                            \r"
   end
+
+  def blackjack_bunnie(how_many = 1)
+    how_many.times do
+      puts ''
+      prompt_purple("(\\___/)")
+      prompt_purple("(='.'=)")
+      prompt_purple("(\")_(\")")
+      puts ''
+    end
+  end
 end
 
 class Participant
@@ -163,9 +173,8 @@ class TwentyOneGame
     loop do
       display_welcome_message
       main_game
-      break
-      # display_match_winner
-      # play_again? ? play_continues : break
+      display_match_winner
+      play_again? ? play_continues : break
     end
 
     display_goodbye_message
@@ -175,13 +184,22 @@ class TwentyOneGame
     loop do
       deal_cards
       show_initial_cards
-      player_turn
-      dealer_turn
-      banner
+      # player_turn
+      # dealer_turn
+      take_turns
+      display_all_stats
       continue_prompt
-      # show_result
       break if match_win?
       reset_game
+    end
+  end
+
+  def take_turns
+    loop do
+      player_turn
+      break if player.busted?
+      dealer_turn
+      break
     end
   end
 
@@ -272,9 +290,9 @@ class TwentyOneGame
 
   def bust_or_stay(who)
     if who.busted?
-      prompt_green("#{who.name} busted!")
+      prompt_green("It's a bust!\n")
       continue_prompt
-      # match_won? ? break : next
+      clear_screen
     else
       who.stay
     end
@@ -307,6 +325,18 @@ class TwentyOneGame
     sleep 1.00
   end
 
+  def display_match_winner
+    if player.match_score == 5
+      prompt_green("#{player.name} has won five rounds! " \
+        "#{player.name} wins the match!\n")
+      prompt_purple("Blackjack Bunnie '#{HIGH_SCORE}' says 'Good Job!'")
+      blackjack_bunnie
+    elsif dealer.match_score == 5
+      prompt_green("#{dealer.name} has won five rounds! " \
+         "#{dealer.name} wins the match!\n")
+    end
+  end
+
   def display_current_score
     puts "#{dealer.name}'s total is #{dealer.total}, #{player.name}'s total " \
          "is #{player.total}.\n\n"
@@ -317,7 +347,7 @@ class TwentyOneGame
     player.display_hand
   end
 
-  def banner
+  def display_all_stats
     display_current_hand
     display_current_score
     report_result
@@ -354,8 +384,8 @@ class TwentyOneGame
   end
 
   def display_match_score
-    prompt_green("Match score -> Player: #{player.match_score} " \
-                 "Dealer: #{dealer.match_score}  (Score 5 to Win the Match!)\n")
+    prompt_green("Match score -> #{player.name}: #{player.match_score} | " \
+      "#{dealer.name}: #{dealer.match_score}  (Score 5 to Win the Match!)\n")
   end
 
   def reset_game
@@ -369,11 +399,22 @@ class TwentyOneGame
     player.match_score == MATCH_GAMES || dealer.match_score == MATCH_GAMES
   end
 
-  def check_state
-    p player.hand
-    p dealer.hand
-    p deck.size
-    p deck.cards
+  def play_again?
+    answer = nil
+    loop do
+      puts "\nGame Over! Start a new match? (y/n)"
+      answer = gets.chomp.downcase
+      break if %w(y n).include?(answer)
+      puts "Invalid entry. Please enter y or n only."
+    end
+
+    answer == 'y'
+  end
+
+  def play_continues
+    dealer.match_score = 0
+    player.match_score = 0
+    reset_game
   end
 end
 
