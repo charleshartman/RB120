@@ -19,7 +19,9 @@ module Blackjack
   # set these to modify gameplay parameters, 21 and 17 are traditional
   HIGH_SCORE = 21
   DEALER_HITS_TO = 17
+end
 
+module Displayable
   def clear_screen
     system 'clear'
     system 'cls'
@@ -52,6 +54,7 @@ end
 
 class Participant
   include Blackjack
+  include Displayable
 
   attr_accessor :name, :hand, :match_score
   attr_writer :total
@@ -75,7 +78,7 @@ class Participant
     total > HIGH_SCORE
   end
 
-  def stay
+  def display_stay
     sleep 1.00
     clear_screen
     prompt_green("#{name} stays with #{total}.\n")
@@ -87,7 +90,7 @@ class Participant
       continue_prompt
       clear_screen
     else
-      stay
+      display_stay
     end
   end
 
@@ -95,6 +98,10 @@ class Participant
     values = hand.map { |card| card[1] }
     total = 0
     hand.each { |val| total += VALUES[val[1]] }
+    correct_for_aces(values, total)
+  end
+
+  def correct_for_aces(values, total)
     values.select { |val| val == 'Ace' }.count.times do
       total -= 10 if total > HIGH_SCORE
     end
@@ -161,6 +168,7 @@ end
 
 class TwentyOneGame
   include Blackjack
+  include Displayable
 
   attr_accessor :player, :dealer, :deck
 
@@ -176,7 +184,7 @@ class TwentyOneGame
       display_welcome_message
       main_game
       display_match_winner
-      play_again ? play_continues : break
+      play_again? ? play_continues : break
     end
 
     display_goodbye_message
@@ -212,6 +220,7 @@ class TwentyOneGame
   def show_initial_cards
     puts dealer_starting_hand
     puts player_starting_hand
+    player.display_total
   end
 
   def dealer_starting_hand
@@ -315,12 +324,12 @@ class TwentyOneGame
   end
 
   def display_match_winner
-    if player.match_score == 5
+    if player.match_score == MATCH_GAMES
       prompt_green("#{player.name} has won #{MATCH_GAMES} rounds! " \
         "#{player.name} wins the match!\n")
       prompt_purple("Bunnie '#{HIGH_SCORE}' says 'Good Job!'")
       blackjack_bunnie
-    elsif dealer.match_score == 5
+    elsif dealer.match_score == MATCH_GAMES
       prompt_purple("#{dealer.name} has won #{MATCH_GAMES} rounds! " \
          "#{dealer.name} wins the match!\n")
     end
@@ -385,11 +394,16 @@ class TwentyOneGame
     dealer.reset_total
   end
 
+  def reset_score
+    dealer.match_score = 0
+    player.match_score = 0
+  end
+
   def match_win?
     player.match_score == MATCH_GAMES || dealer.match_score == MATCH_GAMES
   end
 
-  def play_again
+  def play_again?
     answer = nil
     loop do
       puts "\nGame Over! Start a new match? (y/n)"
@@ -402,8 +416,7 @@ class TwentyOneGame
   end
 
   def play_continues
-    dealer.match_score = 0
-    player.match_score = 0
+    reset_score
     reset_game
   end
 end
