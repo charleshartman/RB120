@@ -81,6 +81,16 @@ class Participant
     prompt_green("#{name} stays with #{total}.\n")
   end
 
+  def bust_or_stay
+    if busted?
+      prompt_green("It's a bust!\n")
+      continue_prompt
+      clear_screen
+    else
+      stay
+    end
+  end
+
   def total
     values = hand.map { |card| card[1] }
     total = 0
@@ -144,8 +154,8 @@ class Deck
     cards.shuffle!
   end
 
-  def deal(num = 1)
-    cards.shift(num)
+  def deal(card = 1)
+    cards.shift(card)
   end
 end
 
@@ -166,7 +176,7 @@ class TwentyOneGame
       display_welcome_message
       main_game
       display_match_winner
-      play_again? ? play_continues : break
+      play_again ? play_continues : break
     end
 
     display_goodbye_message
@@ -187,12 +197,9 @@ class TwentyOneGame
   end
 
   def take_turns
-    loop do
-      player_turn
-      break if player.busted?
-      dealer_turn
-      break
-    end
+    player_turn
+    return if player.busted?
+    dealer_turn
   end
 
   def deal_cards
@@ -203,16 +210,16 @@ class TwentyOneGame
   end
 
   def show_initial_cards
-    puts starting_hand_hidden
-    puts starting_hand_visible
+    puts dealer_starting_hand
+    puts player_starting_hand
   end
 
-  def starting_hand_hidden
+  def dealer_starting_hand
     "Dealer has [#{dealer.hand[0][1]} of #{SYMBOLS[dealer.hand[0][0]]}] " \
        "and [hidden].\n\n"
   end
 
-  def starting_hand_visible
+  def player_starting_hand
     "Player has [#{player.hand[0][1]} of #{SYMBOLS[player.hand[0][0]]}] " \
        "and [#{player.hand[1][1]} of #{SYMBOLS[player.hand[1][0]]}].\n\n"
   end
@@ -264,7 +271,7 @@ class TwentyOneGame
       break if answer == 's' || player.busted?
     end
 
-    bust_or_stay(player)
+    player.bust_or_stay
   end
 
   def dealer_turn
@@ -277,17 +284,7 @@ class TwentyOneGame
       dealer.display_total
     end
 
-    bust_or_stay(dealer)
-  end
-
-  def bust_or_stay(who)
-    if who.busted?
-      prompt_green("It's a bust!\n")
-      continue_prompt
-      clear_screen
-    else
-      who.stay
-    end
+    dealer.bust_or_stay
   end
 
   def player_hit_or_stay
@@ -319,12 +316,12 @@ class TwentyOneGame
 
   def display_match_winner
     if player.match_score == 5
-      prompt_green("#{player.name} has won five rounds! " \
+      prompt_green("#{player.name} has won #{MATCH_GAMES} rounds! " \
         "#{player.name} wins the match!\n")
       prompt_purple("Bunnie '#{HIGH_SCORE}' says 'Good Job!'")
       blackjack_bunnie
     elsif dealer.match_score == 5
-      prompt_green("#{dealer.name} has won five rounds! " \
+      prompt_purple("#{dealer.name} has won #{MATCH_GAMES} rounds! " \
          "#{dealer.name} wins the match!\n")
     end
   end
@@ -347,7 +344,7 @@ class TwentyOneGame
     display_match_score
   end
 
-  def who_wins?
+  def who_wins
     if player.total > HIGH_SCORE then :player_bust
     elsif dealer.total > HIGH_SCORE then :dealer_bust
     elsif dealer.total > player.total then :dealer
@@ -357,7 +354,7 @@ class TwentyOneGame
   end
 
   def report_result
-    result = who_wins?
+    result = who_wins
 
     case result
     when :player_bust then prompt_green("Player busted! Dealer wins!\n")
@@ -369,7 +366,7 @@ class TwentyOneGame
   end
 
   def increment_match_score
-    result = who_wins?
+    result = who_wins
 
     dealer.match_score += 1 if result == :player_bust || result == :dealer
     player.match_score += 1 if result == :dealer_bust || result == :player
@@ -377,7 +374,7 @@ class TwentyOneGame
 
   def display_match_score
     prompt_green("Match score -> #{player.name}: #{player.match_score} | " \
-      "#{dealer.name}: #{dealer.match_score}  (Take #{MATCH_GAMES} games to " \
+      "#{dealer.name}: #{dealer.match_score}  (Win #{MATCH_GAMES} rounds to " \
       "win the match!)\n")
   end
 
@@ -392,7 +389,7 @@ class TwentyOneGame
     player.match_score == MATCH_GAMES || dealer.match_score == MATCH_GAMES
   end
 
-  def play_again?
+  def play_again
     answer = nil
     loop do
       puts "\nGame Over! Start a new match? (y/n)"
