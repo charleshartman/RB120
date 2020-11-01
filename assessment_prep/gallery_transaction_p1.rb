@@ -2,7 +2,11 @@
 
 module Displayable; end
 
-class Transaction; end
+class Transaction
+  def initialize
+    @client = client
+  end
+end
 
 class Client; end
 
@@ -14,3 +18,7 @@ class Photograph < Artwork; end
 
 class Artist; end
 
+sale1 = Transaction.new('John Gray')
+p sale1
+
+# describe classes and objects generally, as well as the creation of objects

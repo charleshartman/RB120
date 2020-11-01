@@ -10,6 +10,12 @@ class Card
     @rank = rank
     @suit = suit
   end
+
+  def to_s; end
+
+  def <=>(other_card)
+    # code
+  end
 end
 
 # For this exercise, numeric cards are low cards, ordered from 2 through 10. 
