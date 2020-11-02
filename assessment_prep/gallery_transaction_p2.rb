@@ -25,11 +25,22 @@ class Photograph < Artwork; end
 
 class Artist; end
 
-john_gray = Client.new('John Gray')
-p john_gray.name
-p john_gray.interests
+john_grey = Client.new('John Grey')
+p john_grey.name
+p john_grey.interests
 
-sale1 = Transaction.new(john_gray)
+sale1 = Transaction.new(john_grey)
 p sale1
 
 # describe instance variables and attr_* methods
+
+=begin
+
+In this example we define the `Client` class on `lines 11-18`. We define the 
+`initialize` method on `lines 15-17`. It takes one argument, which is assigns to
+the `@name` instance variable. Additionally, we invoke the attr_accessor method
+to define setter and getter methods for instance variable @interests and we
+invoke the attr_reader method to define a getter method for instance variable
+`@name`.
+
+=end

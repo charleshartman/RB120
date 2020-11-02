@@ -32,12 +32,12 @@ class Photograph < Artwork; end
 
 class Artist; end
 
-john_gray = Client.new('John Gray')
+john_grey = Client.new('John Grey')
 satya_james = Client.new('Satya James')
-p john_gray.name
-p john_gray.interests
+p john_grey.name
+p john_grey.interests
 
-sale1 = Transaction.new(john_gray)
+sale1 = Transaction.new(john_grey)
 sale2 = Transaction.new(satya_james)
 p sale1
 p sale2
