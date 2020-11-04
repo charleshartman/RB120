@@ -36,11 +36,14 @@ p sale1
 
 =begin
 
-In this example we define the `Client` class on `lines 11-18`. We define the 
+In this example we define the `Client` class on `lines 11-18`. We define the
 `initialize` method on `lines 15-17`. It takes one argument, which is assigns to
 the `@name` instance variable. Additionally, we invoke the attr_accessor method
 to define setter and getter methods for instance variable @interests and we
 invoke the attr_reader method to define a getter method for instance variable
 `@name`.
+
+Instance variables (and the values they point to) such as these are how objects
+keep track of state.
 
 =end
