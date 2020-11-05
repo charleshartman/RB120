@@ -1,4 +1,4 @@
-# gallery_transaction_p4.rb
+# gallery_transaction_p5.rb
 
 module Displayable
   def clear_screen
@@ -40,14 +40,22 @@ class Client
 end
 
 class Artwork
+  attr_reader :artist, :title, :date
+
   def initialize(artist, title, date)
     @artist = artist
     @title = title
     @date = date
   end
+
+  def to_s
+    "#{artist}, #{title}, #{date}. #{medium.capitalize}."
+  end
 end
 
 class Painting < Artwork
+  attr_reader :medium
+
   def initialize(artist, title, date)
     super
     @medium = 'oil on canvas'
@@ -55,6 +63,8 @@ class Painting < Artwork
 end
 
 class Photograph < Artwork
+  attr_reader :medium
+
   def initialize(artist, title, date)
     super
     @medium = 'gelatin silver print'
@@ -65,20 +75,15 @@ class Artist; end
 
 john_grey = Client.new('John Grey')
 satya_james = Client.new('Satya James')
-p john_grey.name
 john_grey.interests = ['Group f64', 'Modernism', 'FSA']
-p john_grey.interests
 
 sale1 = Transaction.new(john_grey)
 sale2 = Transaction.new(satya_james)
 p sale1
 p sale2
-
 puts Transaction.total_transactions
 
 weston = Photograph.new('Edward Weston', 'Pepper No. 30', 1930)
 puts weston
 van_gogh = Painting.new('Vincent van Gogh', 'The Starry Night', 1889)
 puts van_gogh
-
-# talk about inheritance, method lookup path and super
