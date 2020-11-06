@@ -1,24 +1,169 @@
-# OOP
+# Object Oriented Programming with Ruby
+
+## RB129 Study Guide - Charles Hartman
 
 ---
 
-*General OOP Benefits*
+### General OOP Benefits
 
 * The creation of objects within the OOP paradigm allows programmers to approach the design of software applications at a useful level of abstraction.
 * Code can be reused throughout an application with little to no duplication, embracing the DRY (Don't repeat yourself) principle.
 * The general mental model of OOP embraces an approach of breaking problems and solutions down into smaller pieces. This modularity may aid in initial development while also protecting existing code from new or altered pieces of a larger program. An OOP mindset helps manage complexity.
 * OOP allows explicit and intentional design of the public interfaces (methods) available on a class and its resultant objects.
 
-*Classes and Objects*
+
+### Classes and Objects
 
 Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values the those attributes point to.
 
 Thus, classes can be thought of as molds or blueprints and objects as the execution of those plans. When we instantiate an object from a class we stamp out an individual instance of that class. Objects created from the same class have a pattern, or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state.
 
-*Encapsulation*
+### Encapsulation
 
-Encapsulation lets us wall off data and pieces of functionality and serves as a method of data protection. It encourages a structure that allows access from the outside only when it is explicitly and intentionally designed to do so. This "sectioning off" has the added benefit of reinforcing a mental model that compartmentalizes data and methods in smaller, more manageable pieces. With encapsulation we determine what data (and perhaps methods) we wish to keep private and what data we wish to expose through an object's public methods.
+Encapsulation lets us wall off data and pieces of functionality and serves as a method of data protection. When we instantiate a new object from a class, the object allows access from the outside through the object's instance variables, but only in a way that has been explicitly and intentionally designed. This "sectioning off" has the added benefit of reinforcing a mental model that compartmentalizes data and methods in smaller, more manageable pieces. With encapsulation, we determine what data (and perhaps methods) we wish to keep private and what data we wish to expose through an object's public methods.
 
-*Modules*
+### Inheritance
 
-Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the include method invocation. Modules fall between the class and its superclass in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path.
+Class inheritance occurs when a class (the subclass) inherits the behaviors of another class (the superclass). This allows more generalized behaviors for a certain class to be inherited by a subclass. The subclass can then extend and fine-tune those behaviors without excessive duplication of code. In this way the subclass specializes the superclass.
+
+ Mixing modules in to a class can be described as interface inheritance. Rather than inheriting from a more general 'type' the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
+ 
+ You can only subclass from one superclass. You can mix in as many modules as you like. A code example is below.
+
+```
+module Hangable
+  MOUNTING = ['a cleat', 'picture hangers', 'nails']
+
+  def affix_with
+    puts "We suggest hanging this piece with #{MOUNTING.sample}."
+  end
+end
+
+class Artwork
+  include Hangable
+
+  attr_reader :artist, :title, :date
+
+  def initialize(artist, title, date)
+    @artist = artist
+    @title = title
+    @date = date
+  end
+
+  def to_s
+    "#{artist}, #{title}, #{date}. #{medium.capitalize}."
+  end
+end
+
+class Painting < Artwork
+  attr_reader :medium
+
+  def initialize(artist, title, date)
+    super
+    @medium = 'oil on canvas'
+  end
+end
+
+van_gogh = Painting.new('Vincent van Gogh', 'The Starry Night', 1889)
+puts van_gogh
+van_gogh.affix_with
+```
+
+### attr_*
+
+```
+class Artwork
+	attr_accessor :artist, :title, :date
+end
+```
+
+In the code above, we define the custom class `Artwork` with one method call. The `attr_accessor` method is built in to Ruby. When called, it automatically creates getter and setter methods for the instance variable specified by the symbol(s) that are passed in as an argument. In this case, we pass in `:artist, :title,` and `:date`. This will create `#artist`, `#title` and `#date`, as well as `#artist=`, `#title=` and `#date=`. We can then use those getter and setter methods to read and modify the instance variables `@artist`, `@title` and `@date`. `attr_reader` and `attr_writer` are related methods and create only getter or only setter methods respectively.
+
+These setter and getter methods are instance methods and are called on objects instantiated from the custom class. The example below illustrates setting the instance variables for the object `van_gogh` and then changing the value that the `@date` instance variable is referencing.
+
+```
+van_gogh = Artwork.new
+van_gogh.artist = 'Vincent van Gogh'
+van_gogh.title = 'The Starry Night'
+van_gogh.date = 1911
+
+puts "#{van_gogh.artist}, #{van_gogh.title}, #{van_gogh.date}"
+
+van_gogh.date = 1889
+puts "Corrected:\n"
+puts "#{van_gogh.artist}, #{van_gogh.title}, #{van_gogh.date}"
+```
+
+### Instance methods vs. class methods
+
+Class methods are called on the class itself while instance methods are called on objects that have been instantiated by the class, thus class methods are used for functionality that does not pertain to individual objects. The code below is an example.
+
+```
+class Client
+  def self.greeting
+    puts "Greetings, client!"
+  end
+end
+
+Client.greeting
+```
+
+### Modules
+
+Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the include method invocation. Modules fall between the object's class and its superclass in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path.
+
+
+### Method Lookup Path
+
+Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will look for said method, and in what order in terms of class inheritance Ruby will look for the method. Ruby stops looking after it locates the first matching method in the path. You may see the method lookup path for a particular object by calling the `Module#ancestors` method on the object's class. When more than one module is "mixed in" to a class, the last module `include` is the first module in the method lookup path. The example below illustrates this.
+
+```
+module Displayable; end
+
+module Collectible; end
+
+class Client
+  include Displayable
+  include Collectible
+
+  def initialize(name)
+    @name = name
+  end
+end
+
+puts Client.ancestors 
+# 
+# Client
+# Collectible
+# Displayable
+# Object
+# Kernel
+# BasicObject
+```
+
+
+### Class variables
+
+```
+class Transaction
+  @@order_number = 0
+
+  def initialize(client)
+    @@order_number += 1
+    @client = client
+  end
+
+  def self.total_transactions
+    @@order_number
+  end
+end
+
+Transaction.new('John Grey')
+Transaction.new('Satya James')
+puts "Total transactions: #{Transaction.total_transactions}"
+```
+
+
+
+
+

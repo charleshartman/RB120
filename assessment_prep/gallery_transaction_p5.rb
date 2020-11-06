@@ -15,6 +15,14 @@ module Displayable
   end
 end
 
+module Hangable
+  MOUNTING = ['a cleat', 'picture hangers', 'nails']
+
+  def affix_with
+    puts "We suggest hanging this piece with #{MOUNTING.sample}."
+  end
+end
+
 class Transaction
   include Displayable
 
@@ -40,6 +48,8 @@ class Client
 end
 
 class Artwork
+  include Hangable
+
   attr_reader :artist, :title, :date
 
   def initialize(artist, title, date)
@@ -87,3 +97,4 @@ weston = Photograph.new('Edward Weston', 'Pepper No. 30', 1930)
 puts weston
 van_gogh = Painting.new('Vincent van Gogh', 'The Starry Night', 1889)
 puts van_gogh
+van_gogh.affix_with
