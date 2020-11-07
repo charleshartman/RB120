@@ -81,7 +81,15 @@ class Photograph < Artwork
   end
 end
 
-class Artist; end
+class Artist
+  attr_reader :name, :birth, :death
+
+  def initialize(name, birth, death = nil)
+    @name = name
+    @birth = birth
+    @death = death
+  end
+end
 
 john_grey = Client.new('John Grey')
 satya_james = Client.new('Satya James')
@@ -92,6 +100,13 @@ sale2 = Transaction.new(satya_james)
 p sale1
 p sale2
 puts Transaction.total_transactions
+
+edward_weston = Artist.new('Edward Weston', 1886, 1958)
+vincent_van_gogh = Artist.new('Vincent van Gogh', 1853, 1890)
+rae_davis = Artist.new('Rae Davis', 1970)
+p edward_weston
+p vincent_van_gogh
+p rae_davis
 
 weston = Photograph.new('Edward Weston', 'Pepper No. 30', 1930)
 puts weston
