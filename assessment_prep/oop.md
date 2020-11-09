@@ -23,7 +23,7 @@ Thus, classes can be thought of as molds or blueprints and objects as the execut
 
 ### Polymorphism
 
-Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of different objects to respond in different ways to the same message (or method invocation)... or "the ability for different types of data to respond to a common interface." This can be accomplished through inheritance, by redefining specific behaviors in subclasses more fine-tuned for there specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of modules (mixins) that provide additional shared behaviors to objects. 
+Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of different objects to respond in different ways to the same message (or method invocation)... or "the ability for different types of data to respond to a common interface." This can be accomplished through inheritance, by redefining specific behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of modules (mixins) that provide additional shared behaviors to objects. 
 
 ---
 
