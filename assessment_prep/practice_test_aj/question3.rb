@@ -17,7 +17,7 @@ class House
 end
 
 class Room < House
-  def initialize; end
+  def initialize; end # <== change made here
 end
 
 my_house = House.new
