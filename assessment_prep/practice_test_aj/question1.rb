@@ -13,7 +13,8 @@ class Humanoid
   end
 
   def self.number_of_eyes
-    puts "Members of the #{self} class have #{EYES} eyes."
+    # fixed with explicit `self::EYES`
+    puts "Members of the #{self} class have #{self::EYES} eyes."
   end
 end
 
@@ -29,3 +30,5 @@ end
 cyclops = Cyclops.new
 cyclops.number_of_eyes
 Cyclops.number_of_eyes
+Humanoid.number_of_eyes
+

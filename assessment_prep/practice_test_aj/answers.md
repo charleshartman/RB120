@@ -44,7 +44,7 @@ Cyclops.number_of_eyes
 
 While the first output is what we should expect, the second output is not. This is because of the lexical scope of constants in Ruby. When we call `number_of_eyes` on the object `cyclops` it does not find the method in `Cyclops`, so it precedes up the method lookup chain and finds in `Humanoid`. The method then calls `self.class` and `eyes` and interpolates the return values into the given string argument. We then call the `puts` method and pass in the string as an argument. This outputs the string and returns nil. `self.class` calls the `class` method on the calling object, `cyclops` which returns `Cyclops`. `eyes` calls the `eyes` getter method. Even though we had to go up the method lookup chain to find the `number_of_eyes` method, when we call instance methods from within the `number_of_eyes` method in `Humanoid`, Ruby still starts method lookup from the calling object's class (`Cyclops`). Since `Cyclops` has a getter method for `eyes` and `@eyes` was assigned a value of `1` when `cyclops` was initialized, the call to `eyes` returns `1`.
 
-The second output is perhaps not what we would expect if we do not understand lexical scope as applied, in this case, to constants. In this case, we call the **class** method `number_of_eyes` on the `Cyclops` class. This method calls the puts method and passes in a string as an argument. There are two values interpolated into this string. The keyword `self` here simply returns `Cyclops`, the class that called the (class) method. `EYES` returns the value that the constant `EYES` is pointing to. Unlike methods, Ruby looks for this value in the immediate lexical scope rather than starting at the bottom the the method lookup chain as it did before. Since it finds an `EYES` constant in `Humanoid`, it returns the value it is pointing to, which is `2`. There are multiple ways to fix this problem. The cleanest way, since the presence of these constants is redundant, would be to get rid of the constants altogether and simply use the @eyes instance variables. If keeping the constants was somehow necessary then you could simply define the `number_of_eyes` class method in the `Cyclops` class as well as `Humanoid`. This violates DRY however. Lastly, you could explicitly point to `Cyclops::EYES` in the string interpolation. This would achieve the correct result in the case of the Cyclops class, but then introduce problems were you to call the `number_of_eyes` class method on `Humanoid`.
+The second output is perhaps not what we would expect if we do not understand lexical scope as applied, in this case, to constants. In this case, we call the **class** method `number_of_eyes` on the `Cyclops` class. This method calls the `puts` method and passes in a string as an argument. There are two values interpolated into this string. The keyword `self` here simply returns `Cyclops`, the class that called the (class) method. `EYES` returns the value that the constant `EYES` is pointing to. Unlike methods, Ruby looks for this value in the immediate lexical scope rather than starting at the bottom of the method lookup chain as it did before. Since it finds an `EYES` constant in `Humanoid`, it returns the value it is pointing to, which is `2`. There are multiple ways to fix this problem. The cleanest way, since the presence of these constants is redundant, would be to get rid of the constants altogether and simply use the `@eyes` instance variables. If keeping the constants was somehow necessary then you could simply define the `number_of_eyes` class method in the `Cyclops` class as well as `Humanoid`, this violates DRY however. Another option would be to explicitly point to `Cyclops::EYES` in the string interpolation. This would achieve the correct result in the case of the Cyclops class, but then introduce problems were you to call the `number_of_eyes` class method on `Humanoid`. Lastly, you could append the keyword `self` to `EYES`, which would tell Ruby to look in the calling object's class for the constant.
 
 ---
 
@@ -194,9 +194,11 @@ end
 
 *Class inheritance* occurs when a class (the subclass) inherits the behaviors of another class (the superclass). This allows more generalized behaviors for a certain class to be inherited by a subclass. The subclass can then extend and fine-tune those behaviors without excessive duplication of code. In this way the subclass specializes the superclass.
 
- Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
+Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
  
- You can only subclass from one superclass. You can mix in as many modules as you like.
+You can only subclass from one superclass. You can mix in as many modules as you like.
+ 
+Note that objects can be instantiated from classes but not from modules.
 
 ---
 
@@ -234,6 +236,8 @@ The method lookup path for my_tree.grow would be:
 Salicaceae -> Photosynthesizable -> Reproducable -> Tree -> Growable -> Plant -> Object -> Kernel -> BasicObject
 
 This can be checked by calling `Module#ancestors` on the `Salicaceae` class, as we have above.
+
+Note that when multiple modules are "included" in a given class, Ruby will look at the last `include` first and precede upwards. Thus, in the `Salicaceae` class in the above code, after looking in the class, Ruby will look in the `Photosynthesizable` module first, then the `Reproducable` module (and then proceed through the lookup path).
 
 ---
 
@@ -286,7 +290,9 @@ class GroceryList
   end
 
   def +(other_list)
-    items.concat(other_list.items)
+    combo_list = GroceryList.new
+    combo_list.items = items.concat(other_list.items)
+    combo_list
   end
 end
 
@@ -294,7 +300,7 @@ bobs_list = GroceryList.new(["Carrots", "Milk"])
 jims_list = GroceryList.new(["Hamburgers"])
 
 joined_list = bobs_list + jims_list
-p joined_list # => ["Carrots", "Milk", "Hamburgers"]
+p joined_list.items # => ["Carrots", "Milk", "Hamburgers"]
 ```
 
 ---
