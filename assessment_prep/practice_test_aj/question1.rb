@@ -31,4 +31,3 @@ cyclops = Cyclops.new
 cyclops.number_of_eyes
 Cyclops.number_of_eyes
 Humanoid.number_of_eyes
-

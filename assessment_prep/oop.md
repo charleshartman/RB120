@@ -23,7 +23,37 @@ Thus, classes can be thought of as molds or blueprints and objects as the execut
 
 ### Polymorphism
 
-Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of different objects to respond in different ways to the same message (or method invocation)... or "the ability for different types of data to respond to a common interface." This can be accomplished through inheritance, by redefining specific behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of modules (mixins) that provide additional shared behaviors to objects. 
+Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of objects of different types to respond in different ways to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining specific behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. Lastly, we can implement polymorphism through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes. The example below highlights polymorphism through duck-typing. Examples of polymorphism through inheritance and with modules appear elsewhere in this guide.
+
+Polymorphism through duck-typing example:
+
+```ruby
+class Cutting
+  def knife(workers)
+    workers.each(&:cut)
+  end
+end
+
+class Logger
+  def cut
+    puts "I am slicing the logs! Timberrrr!"
+  end
+end
+
+class Chef
+  def cut
+    puts "Chopping these onions is making me cry."
+  end
+end
+
+class Seamstress
+  def cut
+    puts "I use very sharp scissors to cut my thread."
+  end
+end
+
+Cutting.new.knife([Logger.new, Chef.new, Seamstress.new])
+```
 
 ---
 
@@ -37,11 +67,13 @@ Encapsulation lets us wall off data and pieces of functionality and serves as a 
 
 *Class inheritance* occurs when a class (the subclass) inherits the behaviors of another class (the superclass). This allows more generalized behaviors for a certain class to be inherited by a subclass. The subclass can then extend and fine-tune those behaviors without excessive duplication of code. In this way the subclass specializes the superclass.
 
- Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type' the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
+Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
  
- You can only subclass from one superclass. You can mix in as many modules as you like.
+You can only subclass from one superclass. You can mix in as many modules as you like.
  
- Example:
+Note that objects can be instantiated from classes but not from modules.
+ 
+Example:
 
 ```ruby
 module Hangable
@@ -139,6 +171,46 @@ Client.greeting
 
 Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the `include` method invocation. Modules fall between the object's `class` and its `superclass` in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path.
 
+Modules may also be used for *namespacing*, grouping similar classes together. This helps us organize our code and has the advantage of helping to avoid collisions between similarly named classes in our program. Below is an example:
+
+```ruby
+module Creatures
+  class Arachnid
+    def legs
+      puts "I have eight legs."
+    end
+  end
+
+  class Raccoon
+    def paws 
+      puts "I have four paws."
+    end
+  end
+
+  class Zombie
+    def feet
+      puts "I have ACK!.... BRAINS.... two feet?"
+    end
+  end
+end
+
+Creatures::Zombie.new.feet
+Creatures::Raccoon.new.paws
+Creatures::Arachnid.new.legs
+```
+
+Additionally, modules may be used as *containers* for methods that don't fit elsewhere in our program. These module methods can be called directly from the module. An example follows:
+
+```ruby
+module Consolable
+  def self.prompt_purple(msg)
+    puts "\e[34m#{msg}\e[0m"
+  end
+end
+
+Consolable.prompt_purple("This method doesn't fit elsewhere.")
+```
+
 ---
 
 ### Method Lookup Path
@@ -175,7 +247,7 @@ puts Client.ancestors
 
 ### Class variables
 
-Class variables begin with `@@` and are scoped at the class level. Class variables are accessible by class methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables.
+Class variables begin with `@@` and are scoped at the class level. Class variables are accessible by class methods as well as instance methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables.
 
 Example:
 
@@ -234,7 +306,7 @@ puts bobby == robby
 
 Many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know explicitly what methods you are calling and if they need to be (re)defined within your class to perform as desired.
 
-Example:
+Example 1:
 
 ```ruby
 class NameTag
@@ -254,6 +326,31 @@ lulu = NameTag.new('Lulu', 29)
 lizzie = NameTag.new('Elizabeth', 71)
 
 puts lulu + lizzie
+```
+
+Example 2:
+
+```ruby
+class ArtSupplies
+  attr_accessor :items
+
+  def initialize(items = [])
+    @items = items
+  end
+
+  def +(other_list)
+    combo_list = ArtSupplies.new
+    combo_list.items = items.concat(other_list.items)
+    combo_list
+  end
+end
+
+lizzies_list = ArtSupplies.new(['watercolor paper', "no. 2 brush"])
+lulus_list = ArtSupplies.new(['oxblood ink', 'linen canvas'])
+
+master_list = lizzies_list + lulus_list
+p master_list.items
+# => ["watercolor paper", "no. 2 brush", "oxblood ink", "linen canvas"]
 ```
 
 ---
@@ -332,7 +429,7 @@ NameTag.info
 
 ### Method Access Control
 
-Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class.
+Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. Note that `public`, `private` and `protected` are also methods. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can access other instances of a class and a `private` method cannot.
 
 Methods are `public` by default, to make a method `private` or `protected` we use their respective method calls in our program and anything below it will be `private` or `protected` respectively (unless superseded by another call to `public`, `private` or `protected`).
 
@@ -355,6 +452,25 @@ class AddSeven
 end
 
 AddSeven.new(14)
+```
+
+Example using `protected`:
+
+```ruby
+class Greeting
+  def hello
+    "You may call " + padlocked
+  end
+
+  protected
+
+  def padlocked
+    "this method from all instances of #{self.class}."
+  end
+end
+
+puts Greeting.new.hello     # this works
+puts Greeting.new.padlocked # But not this => protected/NoMethodError
 ```
 
 *finis*
