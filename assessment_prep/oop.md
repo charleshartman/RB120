@@ -277,7 +277,7 @@ Constants have different scoping rules than other variables. The key difference 
 
 The following example illustrates this:
 
-```
+```ruby
 class Creature
   LEGS = 2
 
@@ -298,7 +298,7 @@ Since Ruby looks first to lexical scope, we do not get the result we may be expe
 
 Corrected code example:
 
-```
+```ruby
 class Creature
   LEGS = 2
 
