@@ -1,4 +1,4 @@
-# constant_lexical_scope.rb
+# constant_lexical_scope_ex1.rb
 
 class Creature
   LEGS = 2

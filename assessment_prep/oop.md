@@ -6,10 +6,9 @@
 
 ### General OOP Benefits
 
-* The creation of objects within the OOP paradigm allows programmers to approach the design of software applications at a useful level of abstraction.
-* Code can be reused throughout an application with little to no duplication, embracing the DRY (Don't repeat yourself) principle.
-* The general mental model of OOP embraces an approach of breaking problems and solutions down into smaller pieces. This modularity aids in initial development while also protecting existing code from new or altered pieces of a larger program. An OOP mindset helps manage complexity.
-* OOP allows explicit and intentional design of the public interfaces (methods) available on a class and its resultant objects.
+Object Oriented Programming allows us to think about solving problems and designing programs at a more abstract level. When presented with creating a larger, more complex program our first goal is to truly understand the problem at hand. This typically means breaking it down into smaller pieces and examining it from multiple angles. Even if we don't need to 'break it down' to understand it, we will most certainly need to do so to construct a solution. OOP is a natural extension of this 'building blocks' mindset and helps us manage complexity and code with intention.
+
+Additionally, the modularity of designing classes and creating objects serves to protect data and interfaces, only allowing access when we explicitly and intentionally permit it. With OOP, we define the public interfaces (methods) available on a class and its resultant objects with a great degree of control and precision. This approach decreases dependancies, allowing us to more easily make changes to our program without creating ripple effects that flow through (and potentially break) other parts of our codebase. OOP also supports and encourages adherence to the DRY (Don't repeat yourself) principle, by making it easier to reuse pieces of code and avoid duplication.
 
 ---
 
@@ -69,7 +68,7 @@ Encapsulation lets us wall off data and pieces of functionality and serves as a 
 
 Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
  
-You can only subclass from one superclass. You can mix in as many modules as you like.
+You can only subclass from one superclass, but you may mix in as many modules as you like.
  
 Note that objects can be instantiated from classes but not from modules.
  
@@ -268,6 +267,54 @@ end
 Transaction.new('John Grey')
 Transaction.new('Satya James')
 puts "Total transactions: #{Transaction.total_transactions}"
+```
+
+---
+
+### Constants and Lexical Scope
+
+Constants have different scoping rules than other variables. The key difference being that constant resolution looks to *lexical scope* first. If the constant is not located in the lexical scope of method seeking its value, it will then proceed to search through the method's inheritance hierarchy.
+
+The following example illustrates this:
+
+```
+class Creature
+  LEGS = 2
+
+  def how_many_legs
+    puts "#{self.class}s walk on #{LEGS} legs."
+  end
+end
+
+class Arachnid < Creature
+  LEGS = 8
+end
+
+spider = Arachnid.new
+spider.how_many_legs # => Arachnids walk on 2 legs.
+```
+
+Since Ruby looks first to lexical scope, we do not get the result we may be expecting from the code above. When our calling object `spider` calls `#how_many_legs`, the method is not found in `Arachnid` so Ruby proceeds up the method lookup chain to `Creature`. Having found the method there, Ruby looks within the lexical scope of `Creature` first for the `LEGS` constant. Note that if `LEGS` was not initialized and assigned a value in `Creature`, Ruby would generate an error, it would not "go back" to `Arachnid` to look for `LEGS`. We need to give Ruby more explicit direction about where to look for the constant in this case. We can use the namespace resolution operator `::` to achieve this. While `Arachnid::LEGS` would achieve the desired result in this case, a better solution would be explicitly accessing `LEGS` from the calling object's class with `self.class::LEGS`. That way calls to `Creature` objects return the desired number of legs as well. 
+
+Corrected code example:
+
+```
+class Creature
+  LEGS = 2
+
+  def how_many_legs
+    puts "#{self.class}s walk on #{self.class::LEGS} legs."
+  end
+end
+
+class Arachnid < Creature
+  LEGS = 8
+end
+
+spider = Arachnid.new
+spider.how_many_legs # => Arachnids walk on 2 legs.
+zombie = Creature.new
+zombie.how_many_legs # => Creatures walk on 2 legs.
 ```
 
 ---
