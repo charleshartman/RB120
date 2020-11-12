@@ -246,7 +246,7 @@ puts Client.ancestors
 
 ### Class variables
 
-Class variables begin with `@@` and are scoped at the class level. Class variables are accessible by class methods as well as instance methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables.
+Class variables begin with `@@` and are scoped at the class level. Class variables are accessible by class methods as well as instance methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables. This also means we should avoid using class variables when working with inheritance as it is very easy to reassign the value of a class variable in a subclass and thus create problems for objects of the superclass or other subclasses sharing that state.
 
 Example:
 
