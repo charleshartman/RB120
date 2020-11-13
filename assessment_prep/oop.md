@@ -6,9 +6,9 @@
 
 ### General OOP Benefits
 
-Object Oriented Programming allows us to think about solving problems and designing programs at a more abstract level. When presented with creating a larger, more complex program our first goal is to truly understand the problem at hand. This typically means breaking it down into smaller pieces and examining it from multiple angles. Even if we don't need to 'break it down' to understand it, we will most certainly need to do so to construct a solution. OOP is a natural extension of this 'building blocks' mindset and helps us manage complexity and code with intention.
+Object Oriented Programming allows us to think about solving problems and designing programs at a more abstract level. When presented with creating a larger, more complex program our first goal is to truly understand the problem at hand. This typically means breaking it down into smaller pieces and examining it from multiple angles. Even if we don't need to 'break it down' to understand it, we will most certainly need to do so to construct a solution. OOP is a natural extension of this 'building blocks' mindset and helps us both manage complexity and code with intention.
 
-Additionally, the modularity of designing classes and creating objects serves to protect data and interfaces, only allowing access when we explicitly and intentionally permit it. With OOP, we define the public interfaces (methods) available on a class and its resultant objects with a great degree of control and precision. This approach decreases dependancies, allowing us to more easily make changes to our program without creating ripple effects that flow through (and potentially break) other parts of our codebase. OOP also supports and encourages adherence to the DRY (Don't repeat yourself) principle, by making it easier to reuse pieces of code and avoid duplication.
+Additionally, the modularity of designing classes and creating objects serves to protect data and interfaces, only allowing access when we explicitly and intentionally permit it. With OOP, we can define the public interfaces (methods) available on a class and its resultant objects with a great degree of control and precision. This approach decreases dependancies, allowing us to more easily make changes to our program without creating ripple effects that flow through (and potentially break) other parts of our codebase. OOP also supports and encourages adherence to the DRY (Don't repeat yourself) principle, by making it easier to reuse pieces of code and avoid duplication.
 
 ---
 
@@ -16,7 +16,7 @@ Additionally, the modularity of designing classes and creating objects serves to
 
 Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes point to.
 
-Thus, classes can be thought of as molds or blueprints and objects as the execution of those plans. When we instantiate an object from a class we stamp out an individual instance of that class. Objects created from the same class have a pattern, or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state.
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct (instantiate) an individual instance of that class. Objects created from the same class have a pattern, or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state.
 
 ---
 
@@ -66,11 +66,7 @@ Encapsulation lets us wall off data and pieces of functionality and serves as a 
 
 *Class inheritance* occurs when a class (the subclass) inherits the behaviors of another class (the superclass). This allows more generalized behaviors for a certain class to be inherited by a subclass. The subclass can then extend and fine-tune those behaviors without excessive duplication of code. In this way the subclass specializes the superclass.
 
-Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, where interface inheritance (mixin modules) is a 'has-a' relationship.
- 
-You can only subclass from one superclass, but you may mix in as many modules as you like.
- 
-Note that objects can be instantiated from classes but not from modules.
+Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, whereas interface inheritance (mixin modules) is a 'has-a' relationship. While you can only subclass from one superclass, but you may mix in as many modules as you like. (Note that objects can be instantiated from classes but not from modules.)
  
 Example:
 
@@ -123,7 +119,7 @@ class Artwork
 end
 ```
 
-In the code above, we define the custom class `Artwork` with one method call. The `attr_accessor` method is built in to Ruby. When called, it automatically creates getter and setter methods for the instance variable specified by the symbol(s) that are passed in as an argument. In this case, we pass in `:artist, :title,` and `:date`. This will create `#artist`, `#title` and `#date`, as well as `#artist=`, `#title=` and `#date=`. We can then use those getter and setter methods to read and modify the instance variables `@artist`, `@title` and `@date`. `attr_reader` and `attr_writer` are related methods and create only getter or only setter methods respectively.
+In the code above, we define the custom class `Artwork` with one method call. The `attr_accessor` method is built in to Ruby. When called, it automatically creates getter and setter methods for the instance variable specified by the symbol(s) that are passed in as an argument. In this case, we pass in `:artist,` `:title,` and `:date`. This will create `#artist`, `#title` and `#date`, as well as `#artist=`, `#title=` and `#date=`. We can then use those getter and setter methods to read and modify the instance variables `@artist`, `@title` and `@date`. `attr_reader` and `attr_writer` are related methods and create only getter or only setter methods respectively.
 
 These setter and getter methods are instance methods and are called on objects instantiated from the custom class. The example below (in addition to our class definition above) illustrates setting the instance variables for the object `van_gogh` and then changing the value that the `@date` instance variable is referencing.
 
@@ -150,16 +146,22 @@ Example:
 
 ```ruby
 class Client
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
   def self.greeting
-    puts "Greetings, Client! This is a class method."
+    puts "Greetings, #{self}! This is a class method."
   end
 
   def greet
-    puts "Hola, client! This is an instance method."
+    puts "Hola, #{name}! This is an instance method."
   end
 end
 
-tom = Client.new
+tom = Client.new('Tom')
 tom.greet
 Client.greeting
 ```
@@ -214,7 +216,7 @@ Consolable.prompt_purple("This method doesn't fit elsewhere.")
 
 ### Method Lookup Path
 
-Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will look for said method, and in what order in terms of class inheritance Ruby will look for the method. Ruby stops looking after it locates the first matching method in the path. You may see the method lookup path for a particular object by calling the `Module#ancestors` method on the object's class. When more than one module is "mixed in" to a class, the last module included is the first module in the method lookup path.
+Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will initially look for the method, and in what order in terms of class inheritance Ruby will continue to look for the method should it not find it in the object's initial class. Ruby stops looking after it locates the first matching method in the path. You may see the method lookup path for a particular object by calling the `Module#ancestors` method on the object's class. When more than one module is "mixed in" to a class, the last module included is the first module in the method lookup path.
 
 Example:
 
@@ -248,7 +250,7 @@ puts Client.ancestors
 
 Class variables begin with `@@` and are scoped at the class level. Class variables are accessible by class methods as well as instance methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables. This also means we should avoid using class variables when working with inheritance as it is very easy to reassign the value of a class variable in a subclass and thus create problems for objects of the superclass or other subclasses sharing that state.
 
-Example:
+This example does not involve inheritance and illustrates using a class variable to keep track of how many objects of the given class have been instantiated:
 
 ```ruby
 class Transaction
@@ -321,7 +323,7 @@ zombie.how_many_legs # => Creatures walk on 2 legs.
 
 ### Equality
 
-Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. But, we must remember that `==` is a method, not an operator. So when we are calling `Array#==`, `Hash#==`, `Integer#==` or `String#==` it behaves in this way, but in a custom class `==` is inherited from `BasicObject#==` which asks if the objects are the same, rather than the values. Since `==` is a method, not an operator, we can define our own `==` and use the appropriate Array, Hash, String or Integer method instead.
+Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. But, we must remember that `==` is a method, not an operator. So when we are calling `Array#==`, `Hash#==`, `Integer#==` or `String#==` it behaves in this way, but in a custom class `==` is inherited from `BasicObject#==` which asks if the objects are the same, rather than the values. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
 
 Example:
 
@@ -345,7 +347,7 @@ puts bobby == robby
 ```
 
 `equal?` asks if the objects are the same. It is the same as comparing `object_id`s. `===` is also a method, and is used implicitly in `case` statement evaluation. In the case of `(1..10) === 5` for example, it asks, 'if (1..10) is a group, would 5 be included in that group?'.
-`eql?` asks if two objects have the same value and if they are of the class. It is most often used by Hash.
+`eql?` asks if two objects have the same value and if they are of the same class. `eql?` is most often used by Hash.
 
 ---
 
@@ -476,7 +478,7 @@ NameTag.info
 
 ### Method Access Control
 
-Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. Note that `public`, `private` and `protected` are also methods. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can access other instances of a class and a `private` method cannot.
+Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. Note that `public`, `private` and `protected` are also methods. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can access other instances of the same class and a `private` method cannot.
 
 Methods are `public` by default, to make a method `private` or `protected` we use their respective method calls in our program and anything below it will be `private` or `protected` respectively (unless superseded by another call to `public`, `private` or `protected`).
 
