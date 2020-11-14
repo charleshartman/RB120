@@ -389,7 +389,7 @@ class ArtSupplies
 
   def +(other_list)
     combo_list = ArtSupplies.new
-    combo_list.items = items.concat(other_list.items)
+    combo_list.items = items + other_list.items
     combo_list
   end
 end
