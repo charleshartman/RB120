@@ -22,7 +22,7 @@ Thus, classes can be thought of as blueprints and objects as the execution of th
 
 ### Polymorphism
 
-Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of objects of different types to respond in different ways to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining specific behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. Lastly, we can implement polymorphism through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes. The example below highlights polymorphism through duck-typing. Examples of polymorphism through inheritance and with modules appear elsewhere in this guide.
+Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of objects of different types to respond in different ways to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. Lastly, we can implement polymorphism through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes. The example below highlights polymorphism through duck-typing. Examples of polymorphism through inheritance and with modules appear elsewhere in this guide.
 
 Polymorphism through duck-typing example:
 
@@ -58,7 +58,7 @@ Cutting.new.knife([Logger.new, Chef.new, Seamstress.new])
 
 ### Encapsulation
 
-Encapsulation lets us wall off data and pieces of functionality and serves as a method of data protection. When we instantiate a new object from a class, the object allows access from the outside through the object's public methods and instance variables, but only in a way that has been explicitly and intentionally designed. This "sectioning off" has the added benefit of reinforcing a mental model that compartmentalizes data and methods in smaller, more manageable pieces. With encapsulation, we determine what data (and perhaps methods) we wish to keep private and what data we wish to expose through an object's public methods.
+Encapsulation lets us wall off data and pieces of functionality and serves as a method of data protection. When we instantiate a new object from a class, the object allows access from the outside through the object's public methods and instance variables, but only in a way that has been explicitly and intentionally designed. This "sectioning off" has the added benefit of reinforcing a mental model that compartmentalizes data and methods in smaller, more manageable pieces. With encapsulation, we determine what data and methods we wish to keep private and what data we wish to expose through an object's public methods.
 
 ---
 
@@ -66,7 +66,7 @@ Encapsulation lets us wall off data and pieces of functionality and serves as a 
 
 *Class inheritance* occurs when a class (the subclass) inherits the behaviors of another class (the superclass). This allows more generalized behaviors for a certain class to be inherited by a subclass. The subclass can then extend and fine-tune those behaviors without excessive duplication of code. In this way the subclass specializes the superclass.
 
-Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, whereas interface inheritance (mixin modules) is a 'has-a' relationship. While you can only subclass from one superclass, but you may mix in as many modules as you like. (Note that objects can be instantiated from classes but not from modules.)
+Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, whereas interface inheritance with modules is a 'has-a' relationship. While you can only subclass from one superclass, but you may mix in as many modules as you like. (Note: objects can be instantiated from classes but not from modules.)
  
 Example:
 
@@ -216,7 +216,7 @@ Consolable.prompt_purple("This method doesn't fit elsewhere.")
 
 ### Method Lookup Path
 
-Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will initially look for the method, and in what order in terms of class inheritance Ruby will continue to look for the method should it not find it in the object's initial class. Ruby stops looking after it locates the first matching method in the path. You may see the method lookup path for a particular object by calling the `Module#ancestors` method on the object's class. When more than one module is "mixed in" to a class, the last module included is the first module in the method lookup path.
+Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will initially look for the method, and in what order in terms of inheritance Ruby will continue to look for the method should it not find it in the object's initial class. Ruby stops looking after it locates the first matching method in the path. You may see the method lookup path for a particular object by calling the `Module#ancestors` method on the object's class. When more than one module is "mixed in" to a class, the last module included is the first module in the method lookup path.
 
 Example:
 
@@ -296,7 +296,7 @@ spider = Arachnid.new
 spider.how_many_legs # => Arachnids walk on 2 legs.
 ```
 
-Since Ruby looks first to lexical scope, we do not get the result we may be expecting from the code above. When our calling object `spider` calls `#how_many_legs`, the method is not found in `Arachnid` so Ruby proceeds up the method lookup chain to `Creature`. Having found the method there, Ruby looks within the lexical scope of `Creature` first for the `LEGS` constant. Note that if `LEGS` was not initialized and assigned a value in `Creature`, Ruby would generate an error, it would not "go back" to `Arachnid` to look for `LEGS`. We need to give Ruby more explicit direction about where to look for the constant in this case. We can use the namespace resolution operator `::` to achieve this. While `Arachnid::LEGS` would achieve the desired result in this case, a better solution would be explicitly accessing `LEGS` from the calling object's class with `self.class::LEGS`. That way calls to `Creature` objects return the desired number of legs as well. 
+Since Ruby looks first to lexical scope, we do not get the result we are expecting from the code above. When our calling object `spider` calls `#how_many_legs`, the method is not found in `Arachnid` so Ruby proceeds up the method lookup chain to `Creature`. Having found the method there, Ruby looks within the lexical scope of `Creature` first for the `LEGS` constant. Note that if `LEGS` was not initialized and assigned a value in `Creature`, Ruby would generate an error, it would not "go back" to `Arachnid` to look for `LEGS`. We need to give Ruby more explicit direction about where to look for the constant. We can use the namespace resolution operator `::` to achieve this. While `Arachnid::LEGS` would achieve the desired result in this case, a better solution would be explicitly accessing `LEGS` from the calling object's class with `self.class::LEGS`. That way calls to `Creature` objects return the desired number of legs as well. 
 
 Corrected code example:
 
@@ -323,7 +323,7 @@ zombie.how_many_legs # => Creatures walk on 2 legs.
 
 ### Equality
 
-Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. But, we must remember that `==` is a method, not an operator. So when we are calling `Array#==`, `Hash#==`, `Integer#==` or `String#==` it behaves in this way, but in a custom class `==` is inherited from `BasicObject#==` which asks if the objects are the same, rather than the values. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
+Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. We must remember, however, that `==` is a method, not an operator. So when we are calling `Array#==`, `Hash#==`, `Integer#==` or `String#==` it compares values, but in a custom class `#==` is inherited from `BasicObject#==` which asks if the **objects** are the same, rather than the values. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
 
 Example:
 
@@ -346,14 +346,17 @@ robby = NameTag.new('Robert')
 puts bobby == robby
 ```
 
-`equal?` asks if the objects are the same. It is the same as comparing `object_id`s. `===` is also a method, and is used implicitly in `case` statement evaluation. In the case of `(1..10) === 5` for example, it asks, 'if (1..10) is a group, would 5 be included in that group?'.
+`equal?` asks if the objects are the same. It is the same as comparing `object_id`s. 
+
+`===` is also a method, and is used implicitly in `case` statement evaluation. In the case of `(1..10) === 5` for example, it asks, "if (1..10) is a group, would 5 be included in that group?".
+
 `eql?` asks if two objects have the same value and if they are of the same class. `eql?` is most often used by Hash.
 
 ---
 
 ### Fake Operators
 
-Many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know explicitly what methods you are calling and if they need to be (re)defined within your class to perform as desired.
+Many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
 
 Example 1:
 
@@ -438,7 +441,7 @@ sale2 = Transaction.new(satya_james)
 
 ### self
 
-Contexts for the keyword `self` in Ruby:
+Contexts for the **keyword** `self` in Ruby:
 * when used within an instance method it refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to disambiguate between initializing a local variable and calling a setter method.
 * `self` is also used for class method definitions
 
