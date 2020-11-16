@@ -509,20 +509,30 @@ AddSeven.new(14)
 Example using `protected`:
 
 ```ruby
-class Greeting
-  def hello
-    "You may call " + padlocked
+class HighScore
+  include Comparable
+
+  def initialize(score)
+    @score = score
+  end
+
+  def <=>(other)
+    score <=> other.score
   end
 
   protected
 
-  def padlocked
-    "this method from all instances of #{self.class}."
-  end
+  attr_reader :score
 end
 
-puts Greeting.new.hello     # this works
-puts Greeting.new.padlocked # But not this => protected/NoMethodError
+lizzie_score = HighScore.new(28736)
+lulu_score = HighScore.new(56732)
+
+if lizzie_score > lulu_score
+  puts "Lizzie has the highest score."
+elsif lulu_score > lizzie_score
+  puts "Lulu has the highest score."
+end
 ```
 
 *finis*
