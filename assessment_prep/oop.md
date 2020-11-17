@@ -16,7 +16,20 @@ Additionally, the modularity of designing classes and creating objects serves to
 
 Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes point to.
 
-Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct (instantiate) an individual instance of that class. Objects created from the same class have a pattern, or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state.
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct (instantiate) an individual instance of that class. Objects created from the same class have a pattern, or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state. A simple example:
+
+```ruby
+class ArtWork
+  def initialize(artist, title, date)
+    @artist = artist
+    @title = title
+    @date = date
+  end
+end
+
+van_gogh = ArtWork.new('Vincent van Gogh', 'The Starry Night', 1889)
+puts van_gogh # => #<ArtWork:0x00007fe3f88400b0> (encoding may differ)
+```
 
 ---
 
