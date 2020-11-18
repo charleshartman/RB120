@@ -14,9 +14,9 @@ Additionally, the modularity of designing classes and creating objects serves to
 
 ### Classes and Objects
 
-Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes point to.
+Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes (instance variables) point to.
 
-Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct (instantiate) an individual instance of that class. Objects created from the same class have a pattern, or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state. A simple example:
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state. A simple example:
 
 ```ruby
 class ArtWork
@@ -35,7 +35,7 @@ puts van_gogh # => #<ArtWork:0x00007fe3f88400b0> (encoding may differ)
 
 ### Polymorphism
 
-Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of objects of different types to respond in different ways to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. Lastly, we can implement polymorphism through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes. The example below highlights polymorphism through duck-typing. Examples of polymorphism through inheritance and with modules appear elsewhere in this guide.
+Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. Lastly, we can implement polymorphism through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes. The example below highlights polymorphism through duck-typing. Examples of polymorphism through inheritance and with modules appear elsewhere in this guide.
 
 Polymorphism through duck-typing example:
 
@@ -506,6 +506,9 @@ class AddSeven
 
   def initialize(number)
     @number = number
+  end
+
+  def add_seven
     puts calculation
   end
 
@@ -516,7 +519,8 @@ class AddSeven
   end
 end
 
-AddSeven.new(14)
+number = AddSeven.new(14)
+number.add_seven # => 21
 ```
 
 Example using `protected`:

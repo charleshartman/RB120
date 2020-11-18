@@ -5,6 +5,9 @@ class AddSeven
 
   def initialize(number)
     @number = number
+  end
+
+  def add_seven
     puts calculation
   end
 
@@ -15,4 +18,5 @@ class AddSeven
   end
 end
 
-AddSeven.new(14)
+number = AddSeven.new(14)
+number.add_seven # => 21
