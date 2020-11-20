@@ -54,6 +54,8 @@ class Caesar
 
   private
 
+  attr_accessor :code, :message
+
   def rot13
     message.each_char { |char| code << plus13(char) }
   end
@@ -64,7 +66,7 @@ class Caesar
 
   def query_string
     loop do
-      prompt_purple("\nPlease enter the message you wish to cipher:")
+      prompt_purple("\nPlease enter the message you wish to cipher/decipher:")
       self.message = gets.chomp
       break unless message.delete(' ').empty?
       puts "I'm sorry, you must enter a value."
@@ -95,8 +97,6 @@ class Caesar
   def display_goodbye
     prompt_purple("Happy (secret) coding! Farewell!")
   end
-
-  attr_accessor :code, :message
 end
 
 Caesar.new.cipher
