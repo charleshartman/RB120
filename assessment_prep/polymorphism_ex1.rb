@@ -1,17 +1,15 @@
-# polymorphism.rb
+# polymorphism_ex1.rb
 
 module Hangable
-  MOUNTING = ['a cleat', 'picture hangers', 'nails']
-
-  def affix_with
-    puts "We suggest hanging this piece with #{MOUNTING.sample}."
+  def hang_with
+    puts "We suggest hanging this piece with #{hardware}."
   end
 end
 
 class Artwork
   include Hangable
 
-  attr_reader :artist, :title, :date
+  attr_reader :artist, :title, :date, :medium
 
   def initialize(artist, title, date)
     @artist = artist
@@ -25,25 +23,30 @@ class Artwork
 end
 
 class Painting < Artwork
-  attr_reader :medium
-
   def initialize(artist, title, date)
     super
     @medium = 'oil on canvas'
   end
+
+  def hardware
+    "picture hangers"
+  end
 end
 
 class Photograph < Artwork
-  attr_reader :medium
-
   def initialize(artist, title, date)
     super
     @medium = 'gelatin silver print'
+  end
+
+  def hardware
+    "a cleat"
   end
 end
 
 weston = Photograph.new('Edward Weston', 'Pepper No. 30', 1930)
 puts weston
+weston.hang_with
 van_gogh = Painting.new('Vincent van Gogh', 'The Starry Night', 1889)
 puts van_gogh
-van_gogh.affix_with
+van_gogh.hang_with

@@ -8,7 +8,7 @@
 
 Object Oriented Programming allows us to think about solving problems and designing programs at a more abstract level. When presented with creating a larger, more complex program our first goal is to truly understand the problem at hand. This typically means breaking it down into smaller pieces and examining it from multiple angles. Even if we don't need to 'break it down' to understand it, we will most certainly need to do so to construct a solution. OOP is a natural extension of this 'building blocks' mindset and helps us both manage complexity and code with intention.
 
-Additionally, the modularity of designing classes and creating objects serves to protect data and interfaces, only allowing access when we explicitly and intentionally permit it. With OOP, we can define the public interfaces (methods) available on a class and its resultant objects with a great degree of control and precision. This approach decreases dependancies, allowing us to more easily make changes to our program without creating ripple effects that flow through (and potentially break) other parts of our codebase. OOP also supports and encourages adherence to the DRY (Don't repeat yourself) principle, by making it easier to reuse pieces of code and avoid duplication.
+This modular approach to designing classes and creating objects serves to protect data and interfaces, only allowing access when we explicitly and intentionally permit it. With OOP, we can define the public interfaces (methods) available on a class (and its resultant objects) with a great degree of control and precision. This approach decreases dependancies, allowing us to more easily make changes to our program without creating ripple effects that flow through (and potentially break) other parts of our codebase. OOP also supports and encourages adherence to the DRY (Don't repeat yourself) principle, by making it easier to reuse pieces of code and avoid duplication.
 
 ---
 
@@ -29,13 +29,19 @@ end
 
 van_gogh = ArtWork.new('Vincent van Gogh', 'The Starry Night', 1889)
 puts van_gogh # => #<ArtWork:0x00007fe3f88400b0> (encoding may differ)
+
+weston = ArtWork.new('Edward Weston', 'Pepper No. 30', 1930)
+puts weston # => #<ArtWork:0x00007fca45833cb0> (encoding may differ)
 ```
 
 ---
 
 ### Polymorphism
 
-Literally, polymorphism means the ability to take on many forms or shapes. In Ruby, it is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. Lastly, we can implement polymorphism through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes. The example below highlights polymorphism through duck-typing. Examples of polymorphism through inheritance and with modules appear elsewhere in this guide.
+In Ruby, polymorphism is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. 
+An example of polymorphism through inheritance and with modules can be found below in the [[Inheritance]] section.
+
+Another way to implement polymorphism is through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes.
 
 Polymorphism through duck-typing example:
 
@@ -81,21 +87,19 @@ Encapsulation lets us wall off data and pieces of functionality and serves as a 
 
 Mixing modules in to a class can be described as *interface inheritance*. Rather than inheriting from a more general 'type', the class inherits useful methods that extend the class. Class inheritance is often described as an 'is-a' relationship, whereas interface inheritance with modules is a 'has-a' relationship. While you can only subclass from one superclass, but you may mix in as many modules as you like. (Note: objects can be instantiated from classes but not from modules.)
  
-Example:
+Class and interface inheritance example:
 
 ```ruby
 module Hangable
-  MOUNTING = ['a cleat', 'picture hangers', 'nails']
-
-  def affix_with
-    puts "We suggest hanging this piece with #{MOUNTING.sample}."
+  def hang_with
+    puts "We suggest hanging this piece with #{hardware}."
   end
 end
 
 class Artwork
   include Hangable
 
-  attr_reader :artist, :title, :date
+  attr_reader :artist, :title, :date, :medium
 
   def initialize(artist, title, date)
     @artist = artist
@@ -109,17 +113,34 @@ class Artwork
 end
 
 class Painting < Artwork
-  attr_reader :medium
-
   def initialize(artist, title, date)
     super
     @medium = 'oil on canvas'
   end
+
+  def hardware
+    "picture hangers"
+  end
 end
+
+class Photograph < Artwork
+  def initialize(artist, title, date)
+    super
+    @medium = 'gelatin silver print'
+  end
+
+  def hardware
+    "a cleat"
+  end
+end
+
+weston = Photograph.new('Edward Weston', 'Pepper No. 30', 1930)
+puts weston
+weston.hang_with
 
 van_gogh = Painting.new('Vincent van Gogh', 'The Starry Night', 1889)
 puts van_gogh
-van_gogh.affix_with
+van_gogh.hang_with
 ```
 
 ---
