@@ -16,7 +16,7 @@ This modular approach to designing classes and creating objects serves to protec
 
 Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes (instance variables) point to.
 
-Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may contain totally different values. This encapsulation of a collection of instance variables and their values makes up the object's state. A simple example:
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and their values makes up the object's state. An example:
 
 ```ruby
 class ArtWork
@@ -38,8 +38,7 @@ puts weston # => #<ArtWork:0x00007fca45833cb0> (encoding may differ)
 
 ### Polymorphism
 
-In Ruby, polymorphism is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine (or redefine) behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. 
-An example of polymorphism through inheritance and with modules can be found below in the [[Inheritance]] section.
+In Ruby, polymorphism is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by extending or redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. An example of polymorphism through inheritance and with modules can be found below in the [[Inheritance]] section.
 
 Another way to implement polymorphism is through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes.
 
@@ -357,7 +356,7 @@ zombie.how_many_legs # => Creatures walk on 2 legs.
 
 ### Equality
 
-Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. We must remember, however, that `==` is a method, not an operator. So when we are calling `Array#==`, `Hash#==`, `Integer#==` or `String#==` it compares values, but in a custom class `#==` is inherited from `BasicObject#==` which asks if the **objects** are the same, rather than the values. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
+Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. We must remember, however, that `==` is a method, not an operator. So while the `Array#==`, `Hash#==`, `Integer#==` or `String#==` methods compare values, in a custom class `#==` is inherited from `BasicObject#==` which instead asks if the **objects** are the same. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
 
 Example:
 
@@ -390,7 +389,7 @@ puts bobby == robby
 
 ### Fake Operators
 
-Many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
+As demonstrated with `#==` above in the [[Equality]] section, many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
 
 Example 1:
 
@@ -476,7 +475,7 @@ sale2 = Transaction.new(satya_james)
 ### self
 
 Contexts for the **keyword** `self` in Ruby:
-* when used within an instance method it refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to disambiguate between initializing a local variable and calling a setter method.
+* when used within an instance method it refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to distinguish between initializing a local variable and calling a setter method.
 * `self` is also used for class method definitions
 
 Example:
@@ -515,7 +514,7 @@ NameTag.info
 
 ### Method Access Control
 
-Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. Note that `public`, `private` and `protected` are also methods. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can access other instances of the same class and a `private` method cannot.
+Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. Note that `public`, `private` and `protected` are also methods. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can be accessed from other instances of the same class and a `private` method cannot.
 
 Methods are `public` by default, to make a method `private` or `protected` we use their respective method calls in our program and anything below it will be `private` or `protected` respectively (unless superseded by another call to `public`, `private` or `protected`).
 
