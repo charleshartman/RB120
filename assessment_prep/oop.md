@@ -16,7 +16,9 @@ This modular approach to designing classes and creating objects serves to protec
 
 Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes (instance variables) point to.
 
-Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and their values makes up the object's state. An example:
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and their values makes up the object's state. 
+
+In the example below we instantiate two different objects from the `ArtWork` class and assign them to local variables `van_gogh` and `weston`. When we call `puts` and pass `van_gogh` and `weston` in as arguments the `Object#to_s` method returns the name of the object's class and an encoding of the object id. These are different objects, with different object ids, each encapsulating its own state.
 
 ```ruby
 class ArtWork
@@ -71,6 +73,8 @@ end
 
 Cutting.new.knife([Logger.new, Chef.new, Seamstress.new])
 ```
+
+Above we call `#knife` on our `Cutting` instance, and pass in an array of three objects: `Logger`, `Chef`, and `Seamstress`. The only thing we care about here is that each of those objects can `#cut`, that is, each of them have the appropriate public interface available.
 
 ---
 
@@ -142,6 +146,8 @@ puts van_gogh
 van_gogh.hang_with
 ```
 
+In this example, `Painting` and `Photograph` both inherit from `Artwork`, so it serves as superclass to their respective subclasses. In both cases part of the `#initialize` method is inherited with additional refinements (addition of `@medium` with different value) being made in the subclass. We also inherit the `#hang_with` interface (method) from our `Hangable` mixin module. 
+
 ---
 
 ### attr_*
@@ -175,7 +181,7 @@ puts "#{van_gogh.artist}, #{van_gogh.title}, #{van_gogh.date}"
 
 Class methods are called on the class itself while instance methods are called on objects that have been instantiated by the class, thus class methods are used for functionality that does not pertain to individual objects.
 
-Example:
+In the example below, the object that local variable `tom` is pointing to invokes the instance method `#greet`, whereas the `Client` class itself invokes the class method `#self.greeting`.
 
 ```ruby
 class Client
@@ -203,9 +209,35 @@ Client.greeting
 
 ### Modules
 
-Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the `include` method invocation. Modules fall between the object's `class` and its `superclass` in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path.
+Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the `include` method invocation. Modules fall between the object's `class` and its `superclass` in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path. In the following example, we `include` the `Portable` in the `Bag` class to extend this related method to `Bag` but not to the more general `Container` superclass or the other subclass, `Crate` where this behavior does not fit.
 
-Modules may also be used for *namespacing*, grouping similar classes together. This helps us organize our code and has the advantage of helping to avoid collisions between similarly named classes in our program. Below is an example:
+```ruby
+module Portable
+  def carry
+    "You can transport this by hand."
+  end
+end
+
+class Container; end
+
+class Crate < Container; end
+
+class Bag < Container
+  include Portable
+
+  attr_reader :type, :color
+
+  def initialize(type, color)
+    @type = type
+    @color = color
+  end
+end
+
+baggu = Bag.new('nylon', 'blue')
+puts baggu.carry
+```
+
+Modules may also be used for *namespacing*, grouping similar classes together. This helps us organize our code and has the advantage of helping to avoid collisions between similarly named classes in our program. In the example below, we group three similar `Creatures` together in a single module and demonstrate how we can instantiate objects from classes defined within modules.
 
 ```ruby
 module Creatures
@@ -358,7 +390,7 @@ zombie.how_many_legs # => Creatures walk on 2 legs.
 
 Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. We must remember, however, that `==` is a method, not an operator. So while the `Array#==`, `Hash#==`, `Integer#==` or `String#==` methods compare values, in a custom class `#==` is inherited from `BasicObject#==` which instead asks if the **objects** are the same. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
 
-Example:
+In the example below we define our own `#==` with `String#==`.
 
 ```ruby
 class NameTag
@@ -476,7 +508,7 @@ sale2 = Transaction.new(satya_james)
 
 Contexts for the **keyword** `self` in Ruby:
 * when used within an instance method it refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to distinguish between initializing a local variable and calling a setter method.
-* `self` is also used for class method definitions
+* `self` is also used for class method definitions (by prepending `self` to the method name)
 
 Example:
 
