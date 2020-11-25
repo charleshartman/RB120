@@ -44,7 +44,7 @@ puts weston
 
 In Ruby, polymorphism is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by extending or redefining behaviors in subclasses more fine-tuned to their specific data. This allows us to reuse as well as refine behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. 
 
-An example of polymorphism through inheritance and with modules can be found below in the [[Class and Interface Inheritance]] section.
+An example of polymorphism through inheritance and with modules can be found in the **Class and Interface Inheritance** section below.
 
 Another way to implement polymorphism is through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes.
 
@@ -158,7 +158,7 @@ van_gogh.hang_with
 # => We suggest hanging this piece with picture hangers.
 ```
 
-In this example, `Painting` and `Photograph` both inherit from `Artwork`, so it serves as superclass to their respective subclasses. In both cases part of the `#initialize` method is inherited with additional refinements (addition of `@medium` with different value) being made in the subclass. We also inherit the `#hang_with` interface (method) from our `Hangable` mixin module. `Painting` and `Photograph` have an 'is-a' relationship with `Artwork`, whereas `Artwork`, `Painting` and `Photograph` have a 'has-a' relationship with `Hangable`. In other words, a `Photograph` **is a** `Artwork` and an `Artwork` **has a** `Hangable` aspect.
+In this example, `Painting` and `Photograph` both inherit from `Artwork`, so it serves as superclass to their respective subclasses. In both cases part of the `#initialize` method is inherited with additional refinements (addition of `@medium` with different value) being made in the subclass. We also inherit the `#hang_with` interface (method) from our `Hangable` mixin module. `Painting` and `Photograph` have an 'is-a' relationship with `Artwork`, whereas `Artwork`, `Painting` and `Photograph` have a 'has-a' relationship with `Hangable`. In other words, a `Photograph` is a `Artwork` and an `Artwork` has a `Hangable` aspect.
 
 ---
 
@@ -447,7 +447,7 @@ puts robby
 
 ### Fake Operators
 
-As demonstrated with `#==` in the [[Equality]] section above, many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
+As demonstrated with `#==` in the **Equality** section above, many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
 
 In this example we simply define our own `#+` using `Integer#+`.
 
