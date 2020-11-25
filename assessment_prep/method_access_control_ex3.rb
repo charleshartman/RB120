@@ -24,3 +24,4 @@ if lizzie_score > lulu_score
 elsif lulu_score > lizzie_score
   puts "Lulu has the highest score."
 end
+# => Lulu has the highest score.

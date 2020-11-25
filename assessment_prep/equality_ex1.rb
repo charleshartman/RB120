@@ -15,4 +15,6 @@ end
 bobby = NameTag.new('Robert')
 robby = NameTag.new('Robert')
 
-puts bobby == robby
+puts bobby == robby # => true
+puts bobby # => #<NameTag:0x00007f9f558401b0> (encoding of object id may differ)
+puts robby # => #<NameTag:0x00007f9f55840138> (encoding of object id may differ)

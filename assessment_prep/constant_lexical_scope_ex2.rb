@@ -13,6 +13,6 @@ class Arachnid < Creature
 end
 
 spider = Arachnid.new
-spider.how_many_legs # => Arachnids walk on 2 legs.
+spider.how_many_legs # => Arachnids walk on 8 legs.
 zombie = Creature.new
 zombie.how_many_legs # => Creatures walk on 2 legs.

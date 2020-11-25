@@ -16,7 +16,7 @@ This modular approach to designing classes and creating objects serves to protec
 
 Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes (instance variables) point to.
 
-Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and their values makes up the object's state. 
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and the values they reference make up the object's state. 
 
 In the example below we instantiate two different objects from the `ArtWork` class and assign them to local variables `van_gogh` and `weston`. When we call `puts` and pass `van_gogh` and `weston` in as arguments the `Object#to_s` method returns the name of the object's class and an encoding of the object id. These are different objects, with different object ids, each encapsulating its own state.
 
@@ -30,17 +30,21 @@ class ArtWork
 end
 
 van_gogh = ArtWork.new('Vincent van Gogh', 'The Starry Night', 1889)
-puts van_gogh # => #<ArtWork:0x00007fe3f88400b0> (encoding may differ)
+puts van_gogh
+# => #<ArtWork:0x00007fe3f88400b0> (encoding of object id may differ)
 
 weston = ArtWork.new('Edward Weston', 'Pepper No. 30', 1930)
-puts weston # => #<ArtWork:0x00007fca45833cb0> (encoding may differ)
+puts weston
+# => #<ArtWork:0x00007fca45833cb0> (encoding of object id may differ)
 ```
 
 ---
 
 ### Polymorphism
 
-In Ruby, polymorphism is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by extending or redefining behaviors in subclasses more fine-tuned for their specific data. This allows us to reuse as well as refine behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. An example of polymorphism through inheritance and with modules can be found below in the [[Inheritance]] section.
+In Ruby, polymorphism is most generally described as the ability of objects of different types to respond **in different ways** to the same message (or method invocation). This can be accomplished through *inheritance*, by extending or redefining behaviors in subclasses more fine-tuned to their specific data. This allows us to reuse as well as refine behaviors while adhering to the principle of DRY (Don't Repeat Yourself). Polymorphism can also be achieved through the use of *modules* (mixins) that provide additional shared behaviors to objects. 
+
+An example of polymorphism through inheritance and with modules can be found below in the [[Class and Interface Inheritance]] section.
 
 Another way to implement polymorphism is through *duck-typing*. Duck-typing does not care about the class of object, it only cares about the interface available on the object. In other words, it is concerned with what an object can do and what messages it can respond to. There is no inheritance involved in duck-typing, instead we are simply accessing a common type of behavior across classes.
 
@@ -72,6 +76,10 @@ class Seamstress
 end
 
 Cutting.new.knife([Logger.new, Chef.new, Seamstress.new])
+# =>
+# I am slicing the logs! Timberrrr!
+# Chopping these onions is making me cry.
+# I use very sharp scissors to cut my thread.
 ```
 
 Above we call `#knife` on our `Cutting` instance, and pass in an array of three objects: `Logger`, `Chef`, and `Seamstress`. The only thing we care about here is that each of those objects can `#cut`, that is, each of them have the appropriate public interface available.
@@ -80,11 +88,11 @@ Above we call `#knife` on our `Cutting` instance, and pass in an array of three 
 
 ### Encapsulation
 
-Encapsulation lets us wall off data and pieces of functionality and serves as a method of data protection. When we instantiate a new object from a class, the object allows access from the outside through the object's public methods and instance variables, but only in a way that has been explicitly and intentionally designed. This "sectioning off" has the added benefit of reinforcing a mental model that compartmentalizes data and methods in smaller, more manageable pieces. With encapsulation, we determine what data and methods we wish to keep private and what data we wish to expose through an object's public methods.
+Encapsulation lets us wall off data and pieces of functionality and serves as a method of data protection. When we instantiate a new object from a class, the object allows access from the outside through the object's public methods and instance variables, but only in a way that has been explicitly and intentionally designed. This "sectioning off" has the added benefit of reinforcing a mental model that compartmentalizes data and methods in smaller, more manageable pieces. With encapsulation, we determine what data and methods we wish to keep private and what data we wish to expose through an object's public methods
 
 ---
 
-### Inheritance
+### Class and Interface Inheritance
 
 *Class inheritance* occurs when a class (the subclass) inherits the behaviors of another class (the superclass). This allows more generalized behaviors for a certain class to be inherited by a subclass. The subclass can then extend and fine-tune those behaviors without excessive duplication of code. In this way the subclass specializes the superclass.
 
@@ -139,14 +147,18 @@ end
 
 weston = Photograph.new('Edward Weston', 'Pepper No. 30', 1930)
 puts weston
+# => Edward Weston, Pepper No. 30, 1930. Gelatin silver print.
 weston.hang_with
+# => We suggest hanging this piece with a cleat.
 
 van_gogh = Painting.new('Vincent van Gogh', 'The Starry Night', 1889)
 puts van_gogh
+# => Vincent van Gogh, The Starry Night, 1889. Oil on canvas.
 van_gogh.hang_with
+# => We suggest hanging this piece with picture hangers.
 ```
 
-In this example, `Painting` and `Photograph` both inherit from `Artwork`, so it serves as superclass to their respective subclasses. In both cases part of the `#initialize` method is inherited with additional refinements (addition of `@medium` with different value) being made in the subclass. We also inherit the `#hang_with` interface (method) from our `Hangable` mixin module. 
+In this example, `Painting` and `Photograph` both inherit from `Artwork`, so it serves as superclass to their respective subclasses. In both cases part of the `#initialize` method is inherited with additional refinements (addition of `@medium` with different value) being made in the subclass. We also inherit the `#hang_with` interface (method) from our `Hangable` mixin module. `Painting` and `Photograph` have an 'is-a' relationship with `Artwork`, whereas `Artwork`, `Painting` and `Photograph` have a 'has-a' relationship with `Hangable`. In other words, a `Photograph` **is a** `Artwork` and an `Artwork` **has a** `Hangable` aspect.
 
 ---
 
@@ -160,7 +172,7 @@ end
 
 In the code above, we define the custom class `Artwork` with one method call. The `attr_accessor` method is built in to Ruby. When called, it automatically creates getter and setter methods for the instance variable specified by the symbol(s) that are passed in as an argument. In this case, we pass in `:artist,` `:title,` and `:date`. This will create `#artist`, `#title` and `#date`, as well as `#artist=`, `#title=` and `#date=`. We can then use those getter and setter methods to read and modify the instance variables `@artist`, `@title` and `@date`. `attr_reader` and `attr_writer` are related methods and create only getter or only setter methods respectively.
 
-These setter and getter methods are instance methods and are called on objects instantiated from the custom class. The example below (in addition to our class definition above) illustrates setting the instance variables for the object `van_gogh` and then changing the value that the `@date` instance variable is referencing.
+These setter and getter methods are instance methods and are called on objects instantiated from the custom class. The example below (in addition to our class definition above) illustrates setting the instance variables for the object referenced by local variable `van_gogh` and then changing the value that the `@date` instance variable is referencing.
 
 ```ruby
 van_gogh = Artwork.new
@@ -169,10 +181,14 @@ van_gogh.title = 'The Starry Night'
 van_gogh.date = 1911
 
 puts "#{van_gogh.artist}, #{van_gogh.title}, #{van_gogh.date}"
+# => Vincent van Gogh, The Starry Night, 1911
 
 van_gogh.date = 1889
+
 puts "Corrected:\n"
 puts "#{van_gogh.artist}, #{van_gogh.title}, #{van_gogh.date}"
+# => Corrected:
+# => Vincent van Gogh, The Starry Night, 1889
 ```
 
 ---
@@ -181,7 +197,7 @@ puts "#{van_gogh.artist}, #{van_gogh.title}, #{van_gogh.date}"
 
 Class methods are called on the class itself while instance methods are called on objects that have been instantiated by the class, thus class methods are used for functionality that does not pertain to individual objects.
 
-In the example below, the object that local variable `tom` is pointing to invokes the instance method `#greet`, whereas the `Client` class itself invokes the class method `#self.greeting`.
+In the example below, the object that local variable `tom` is pointing to invokes the instance method `#greet`, whereas the `Client` class itself invokes the class method `#greeting`. (Note that we prepend the keyword `self` to the method name when defining a class method.)
 
 ```ruby
 class Client
@@ -202,14 +218,17 @@ end
 
 tom = Client.new('Tom')
 tom.greet
+# => Hola, Tom! This is an instance method.
+
 Client.greeting
+# => Greetings, Client! This is a class method.
 ```
 
 ---
 
 ### Modules
 
-Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the `include` method invocation. Modules fall between the object's `class` and its `superclass` in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path. In the following example, we `include` the `Portable` in the `Bag` class to extend this related method to `Bag` but not to the more general `Container` superclass or the other subclass, `Crate` where this behavior does not fit.
+Modules are Ruby's way of implementing multiple inheritance. We can *mixin* to a class as many modules as we wish. Modules are mixed in to a class using the `include` method invocation. Modules fall between the object's `class` and its `superclass` in the method lookup path. If more than one module is mixed in to a class, then the last module included will be the first module referenced in the method lookup path. In the following example, we `include` the `Portable` module in the `Bag` class to extend this related method, `#carry` to `Bag` but not to the more general `Container` superclass or its other subclass, `Crate`, where this behavior does not fit.
 
 ```ruby
 module Portable
@@ -235,6 +254,7 @@ end
 
 baggu = Bag.new('nylon', 'blue')
 puts baggu.carry
+# => You can transport this by hand.
 ```
 
 Modules may also be used for *namespacing*, grouping similar classes together. This helps us organize our code and has the advantage of helping to avoid collisions between similarly named classes in our program. In the example below, we group three similar `Creatures` together in a single module and demonstrate how we can instantiate objects from classes defined within modules.
@@ -265,7 +285,7 @@ Creatures::Raccoon.new.paws
 Creatures::Arachnid.new.legs
 ```
 
-Additionally, modules may be used as *containers* for methods that don't fit elsewhere in our program. These module methods can be called directly from the module. An example follows:
+Additionally, modules may be used as *containers* for methods that don't fit elsewhere in our program. These module methods can be called directly from the module. An example:
 
 ```ruby
 module Consolable
@@ -281,9 +301,9 @@ Consolable.prompt_purple("This method doesn't fit elsewhere.")
 
 ### Method Lookup Path
 
-Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will initially look for the method, and in what order in terms of inheritance Ruby will continue to look for the method should it not find it in the object's initial class. Ruby stops looking after it locates the first matching method in the path. You may see the method lookup path for a particular object by calling the `Module#ancestors` method on the object's class. When more than one module is "mixed in" to a class, the last module included is the first module in the method lookup path.
-
-Example:
+Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will first look for the method, and in what order it will continue to look for the method should it not find it in the calling object's class. Ruby stops looking after it locates the first matching method in the path. Generally speaking, Ruby looks first the object's class, then to any modules included in that class. When more than one module is included or "mixed in" to a class, the last module included is the first module searched in the method lookup path. Ruby then proceeds to the object's superclass, modules, then the superclass of that class and so on and so on.
+ 
+You may see the method lookup path for a particular object by calling the `#ancestors` method on the object's class. The example below shows the behavior described above in terms of (multiple) modules as well as how the method lookup path continues through the applicable built-in Ruby classes and modules.
 
 ```ruby
 module Displayable; end
@@ -334,6 +354,7 @@ end
 Transaction.new('John Grey')
 Transaction.new('Satya James')
 puts "Total transactions: #{Transaction.total_transactions}"
+# => Total transactions: 2
 ```
 
 ---
@@ -361,7 +382,7 @@ spider = Arachnid.new
 spider.how_many_legs # => Arachnids walk on 2 legs.
 ```
 
-Since Ruby looks first to lexical scope, we do not get the result we are expecting from the code above. When our calling object `spider` calls `#how_many_legs`, the method is not found in `Arachnid` so Ruby proceeds up the method lookup chain to `Creature`. Having found the method there, Ruby looks within the lexical scope of `Creature` first for the `LEGS` constant. Note that if `LEGS` was not initialized and assigned a value in `Creature`, Ruby would generate an error, it would not "go back" to `Arachnid` to look for `LEGS`. We need to give Ruby more explicit direction about where to look for the constant. We can use the namespace resolution operator `::` to achieve this. While `Arachnid::LEGS` would achieve the desired result in this case, a better solution would be explicitly accessing `LEGS` from the calling object's class with `self.class::LEGS`. That way calls to `Creature` objects return the desired number of legs as well. 
+Since Ruby looks first to lexical scope, we do not get the result we are expecting from the code above. When our calling object `spider` calls `#how_many_legs`, the method is not found in `Arachnid` so Ruby proceeds up the method lookup chain to `Creature`. Having found the method there, Ruby looks within the lexical scope of `Creature` first for the `LEGS` constant and finds `LEGS = 2`. Note that if `LEGS` was not initialized and assigned a value in `Creature`, Ruby would generate an error: `NameError: uninitialized constant`, it would not "go back" to `Arachnid` to look for `LEGS`. We need to give Ruby more explicit direction about where to look for the constant. We can use the namespace resolution operator `::` to achieve this. While `Arachnid::LEGS` would achieve the desired result in this case, a better solution would be explicitly accessing `LEGS` from the calling object's class with `self.class::LEGS`. That way calls to `Creature` objects return the desired number of legs as well. 
 
 Corrected code example:
 
@@ -379,7 +400,7 @@ class Arachnid < Creature
 end
 
 spider = Arachnid.new
-spider.how_many_legs # => Arachnids walk on 2 legs.
+spider.how_many_legs # => Arachnids walk on 8 legs.
 zombie = Creature.new
 zombie.how_many_legs # => Creatures walk on 2 legs.
 ```
@@ -388,9 +409,9 @@ zombie.how_many_legs # => Creatures walk on 2 legs.
 
 ### Equality
 
-Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. We must remember, however, that `==` is a method, not an operator. So while the `Array#==`, `Hash#==`, `Integer#==` or `String#==` methods compare values, in a custom class `#==` is inherited from `BasicObject#==` which instead asks if the **objects** are the same. Since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
+Generally speaking, `==` in Ruby asks are the values the same, **not** are the objects the same. We must remember, however, that `==` is a method, not an operator. It is one of many methods that look like operators that are often referred to as **fake operators**. So while the `Array#==`, `Hash#==`, `Integer#==` or `String#==` methods compare values, in a custom class `#==` is inherited from `BasicObject#==` which instead asks if the **objects** are the same. However, since `==` is a method, not an operator, we can define our own `#==` and use the appropriate `Array#==`, `Hash#==`, `String#==` or `Integer#==` method instead.
 
-In the example below we define our own `#==` with `String#==`.
+In the example below we define our own `#==` with `String#==`. We can see that our `NameTag#==` tests for string value equality rather than if the objects are the same.
 
 ```ruby
 class NameTag
@@ -408,7 +429,12 @@ end
 bobby = NameTag.new('Robert')
 robby = NameTag.new('Robert')
 
-puts bobby == robby
+puts bobby == robby # => true
+
+puts bobby 
+# => #<NameTag:0x00007f9f558401b0> (encoding of object id may differ)
+puts robby 
+# => #<NameTag:0x00007f9f55840138> (encoding of object id may differ)
 ```
 
 `equal?` asks if the objects are the same. It is the same as comparing `object_id`s. 
@@ -421,9 +447,9 @@ puts bobby == robby
 
 ### Fake Operators
 
-As demonstrated with `#==` above in the [[Equality]] section, many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
+As demonstrated with `#==` in the [[Equality]] section above, many things that look like operators in Ruby are in fact methods.  For example, `===` and `+` are methods rather than operators. This means they can be implemented in our custom classes in a fine-tuned and intentional way. This flexibility, however, can also lead to confusion if we are not aware it. For this reason it is important to know **explicitly** what methods you are calling and if they need to be (re)defined within your class to perform as desired.
 
-Example 1:
+In this example we simply define our own `#+` using `Integer#+`.
 
 ```ruby
 class NameTag
@@ -443,9 +469,10 @@ lulu = NameTag.new('Lulu', 29)
 lizzie = NameTag.new('Elizabeth', 71)
 
 puts lulu + lizzie
+# => 100
 ```
 
-Example 2:
+In this example our objective is to return a new object of the same type as the calling object, so we instantiate that object within our custom `#+` and then assign to it's `@items` instance variable the return value  of calling `Array#+` on `lizzies_list.items` and passing `lulus_list.items` in as an argument.
 
 ```ruby
 class ArtSupplies
@@ -507,7 +534,7 @@ sale2 = Transaction.new(satya_james)
 ### self
 
 Contexts for the **keyword** `self` in Ruby:
-* when used within an instance method it refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to distinguish between initializing a local variable and calling a setter method.
+* when used within an instance method `self` refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to distinguish between initializing a local variable and calling a setter method.
 * `self` is also used for class method definitions (by prepending `self` to the method name)
 
 Example:
@@ -535,44 +562,41 @@ class NameTag
 end
 
 lulu = NameTag.new('Lulu', 29)
-puts lulu.age
+puts lulu.age # => 29
+
 lulu.change_age(30)
-puts lulu.age
+puts lulu.age # => 30
 
 NameTag.info
+# => This is a class method, called by the NameTag class.
 ```
 
 ---
 
 ### Method Access Control
 
-Another benefit of *encapsulation* and OOP is the ability to hide the internal representation of an object from the outside and be intentional about what interfaces are to be accessible through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. Note that `public`, `private` and `protected` are also methods. A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can be accessed from other instances of the same class and a `private` method cannot.
+Another benefit of *encapsulation* and OOP is the ability to hide the internal details of an object and be intentional about what interfaces on the object are accessible from the outside through public methods. This is call *method access control*. This is implemented in Ruby through the use of `public`, `private` and `protected` access modifiers. (Note that `public`, `private` and `protected` are also methods.) A `public` method is accessible to anyone with the class name or object name. These methods can be used from outside the class and determine how other classes and objects interact with it. A `private` method is only usable from within the class and is not directly accessible from other parts of the program. A `protected` method acts like a `public` method from within the class, and a `private` method from outside the class. This allows for access between instances of the same class, but protects those objects from access outside the class. To reiterate, a `protected` method can be accessed from other instances of the same class and a `private` method cannot.
 
 Methods are `public` by default, to make a method `private` or `protected` we use their respective method calls in our program and anything below it will be `private` or `protected` respectively (unless superseded by another call to `public`, `private` or `protected`).
 
 Example using `private`:
 
 ```ruby
-class AddSeven
-  SEVEN = 7
-
-  def initialize(number)
-    @number = number
-  end
-
-  def add_seven
-    puts calculation
+class Greeting
+  def hello
+    "Greetings, " + padlocked
   end
 
   private
 
-  def calculation
-    @number + SEVEN
+  def padlocked
+    "Earthling!"
   end
 end
 
-number = AddSeven.new(14)
-number.add_seven # => 21
+alien = Greeting.new
+puts alien.hello     # this works
+puts alien.padlocked # But not this => private/NoMethodError
 ```
 
 Example using `protected`:
@@ -602,6 +626,8 @@ if lizzie_score > lulu_score
 elsif lulu_score > lizzie_score
   puts "Lulu has the highest score."
 end
+
+# => Lulu has the highest score.
 ```
 
 *finis*
