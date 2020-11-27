@@ -1,6 +1,6 @@
 # Object Oriented Programming with Ruby
 
-## RB129 Study Guide - Charles Hartman
+## RB129 Study Guide by Charles Hartman
 
 ---
 
