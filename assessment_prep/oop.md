@@ -14,9 +14,9 @@ This modular approach to designing classes and creating objects serves to protec
 
 ### Classes and Objects
 
-Objects are created from classes. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes (instance variables) point to.
+Objects are created from classes. The reserved words `class` and `end` are used when defining a custom class. Class names should be in `CamelCase` format. Classes define the attributes and behaviors of the objects that are created from them. The attributes of an object are represented by its instance variables. An object's state is determined by the values that those instance variables reference. The behaviors available to an object are the instance methods defined within the object's class. All objects instantiated from a particular class have access to the same behaviors and attributes, but every object has its own state, which is determined by the values those attributes (instance variables) point to.
 
-Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern or shape in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and the values they reference make up the object's state. 
+Thus, classes can be thought of as blueprints and objects as the execution of those plans. When we instantiate an object from a class we construct an individual instance of that class. Objects created from the same class have a pattern in common, but their instance variables may reference totally different values. This *encapsulation* of a collection of instance variables and the values they reference make up the object's state. 
 
 In the example below we instantiate two different objects from the `ArtWork` class and assign them to local variables `van_gogh` and `weston`. When we call `puts` and pass `van_gogh` and `weston` in as arguments the `Object#to_s` method returns the name of the object's class and an encoding of the object id. These are different objects, with different object ids, each encapsulating its own state.
 
@@ -257,7 +257,7 @@ puts baggu.carry
 # => You can transport this by hand.
 ```
 
-Modules may also be used for *namespacing*, grouping similar classes together. This helps us organize our code and has the advantage of helping to avoid collisions between similarly named classes in our program. In the example below, we group three similar `Creatures` together in a single module and demonstrate how we can instantiate objects from classes defined within modules.
+Modules may also be used for *namespacing*, grouping similar classes together. This helps us organize our code and has the advantage of helping to avoid problems between similarly named classes in our program. In the example below, we group three similar `Creatures` together in a single module and demonstrate how we can instantiate objects from classes defined within modules.
 
 ```ruby
 module Creatures
@@ -299,9 +299,27 @@ Consolable.prompt_purple("This method doesn't fit elsewhere.")
 
 ---
 
+### Constructors
+
+To instantiate a new object of a particular custom class in Ruby we call the class method `::new` on the class. We can define an `initialize` method on our class that will be automatically invoked when we instantiate an object of the class. This is called a *constructor*. In the example below, when we instantiate a new `Artwork` object and assign it to local variable `van_gogh`, our `initialize` method is automatically called and the three arguments that are passed in are assigned to instance variables `@artist`, `@title` and `@date`.
+
+```ruby
+class ArtWork
+  def initialize(artist, title, date)
+    @artist = artist
+    @title = title
+    @date = date
+  end
+end
+
+van_gogh = ArtWork.new('Vincent van Gogh', 'The Starry Night', 1889)
+```
+
+---
+
 ### Method Lookup Path
 
-Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will first look for the method, and in what order it will continue to look for the method should it not find it in the calling object's class. Ruby stops looking after it locates the first matching method in the path. Generally speaking, Ruby looks first the object's class, then to any modules included in that class. When more than one module is included or "mixed in" to a class, the last module included is the first module searched in the method lookup path. Ruby then proceeds to the object's superclass, modules, then the superclass of that class and so on and so on.
+Ruby has a distinct lookup path that it follows each time a method is called. Understanding this lookup path is essential to knowing where an object's call to an instance method will first look for the method, and in what order it will continue to look for the method should it not find it in the calling object's class. Ruby stops looking after it locates the first matching method in the path. Generally speaking, Ruby looks first the object's class, then to any modules included in that class. When more than one module is included or "mixed in" to a class, the last module included is the first module searched in the method lookup path. Ruby then proceeds to the object's superclass, modules, then the superclass of that class and so on and so on. After custom classes/modules, Ruby will always look to `Object`, `Kernel`, and `BasicObject` in that order.
  
 You may see the method lookup path for a particular object by calling the `#ancestors` method on the object's class. The example below shows the behavior described above in terms of (multiple) modules as well as how the method lookup path continues through the applicable built-in Ruby classes and modules.
 
@@ -331,9 +349,50 @@ puts Client.ancestors
 
 ---
 
+### super
+
+`super` is a method that lets us call methods further along the method lookup chain. In the case of a method call with arguments, those arguments get passed up the chain for use by the method that is being invoked unless you call `super()` which does not pass the arguments. You might use this if you wanted to use the passed in arguments in a subclass invocation of a method, but still wanted a piece of functionality from the superclass version of the method.
+
+---
+
+### getter and setter methods
+
+Getter and setter methods allow us to access the values referenced by an object's instance variables. They allow us to access an object's state. A getter method allows us to read the value that a particular instance variable points to and a setter method allows us to modify that value. Getter and setter methods can be defined manually:
+
+```ruby
+class NameTag
+  def name=(n)
+    @name = n
+  end
+
+  def name
+    @name
+  end
+end
+```
+
+Or by using `attr_*` methods. The `attr_accessor` method automatically creates getter and setter methods for the instance variable specified by the symbol(s) that are passed in as an argument.
+
+```ruby
+class NameTag
+  attr_accessor :name
+end
+```
+
+`attr_reader` and `attr_writer` are used in the same way but create only getter or only setter methods respectively.
+
+```ruby
+class NameTag
+  attr_writer :name
+  attr_reader :name
+end
+```
+
+---
+
 ### Class variables
 
-Class variables begin with `@@` and are scoped at the class level. Class variables are accessible by class methods as well as instance methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables. This also means we should avoid using class variables when working with inheritance as it is very easy to reassign the value of a class variable in a subclass and thus create problems for objects of the superclass or other subclasses sharing that state.
+Class variables begin with `@@` and are scoped at the class level whereas instance variables begin with `@` and are scoped at the object level. Class variables are accessible by class methods as well as instance methods, no matter where they are initialized. All objects instantiated from a class share one copy of each class variable. This makes it possible to share state between objects with class variables. This also means we should avoid using class variables when working with inheritance as it is very easy to reassign the value of a class variable in a subclass and thus create problems for objects of the superclass or other subclasses sharing that state.
 
 This example does not involve inheritance and illustrates using a class variable to keep track of how many objects of the given class have been instantiated:
 
@@ -533,9 +592,7 @@ sale2 = Transaction.new(satya_james)
 
 ### self
 
-Contexts for the **keyword** `self` in Ruby:
-* when used within an instance method `self` refers to the calling object, that is, the object that called the method. We use `self` in this way when calling setter methods from within the class. This allows us to distinguish between initializing a local variable and calling a setter method.
-* `self` is also used for class method definitions (by prepending `self` to the method name)
+The keyword `self` has two contexts in Ruby. When defining a class method, we prepend it to the name of the method to identify it as a class method rather than an instance method. This also helps reinforce the message that this method is called by the class itself. `self` is also used within an instance method to distinguish it from local variable assignment behavior. `self` always refers to the caller. In the case of class methods, it refers to the calling class. In the case of instance methods it refers to the calling object and lets Ruby know that we are calling a method on that object rather than initializing a local variable of that name.
 
 Example:
 
