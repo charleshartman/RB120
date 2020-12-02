@@ -1,4 +1,4 @@
-# tree.rb
+# tree_2.rb
 
 class Tree
   attr_reader :log_number, :common_name, :genus, :location
