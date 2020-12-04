@@ -1,8 +1,10 @@
 ## RB129 Interview - Talking Points
 
 ### General OOP Benefits
-- think at a level of abstraction
+- supports thinking at a more abstract level
 - encourages 'building blocks' thinking
+- allows us to visualize connections and interactions
+- break it down, build it up
 - DRY (Don't Repeat Yourself)
 - data Protection
 - explicit and intentional design
@@ -11,30 +13,31 @@
 - objects are created from classes
 - classes are blueprints for objects
 - reserved words `class` and `end`, name in `CamelCase` format
-- every object has its own **state**, which are its instance variables and the values they reference
+- every object has its own **state**: its instance variables and the values they reference
 
 ### Polymorphism
 - the ability of objects of different types to respond **in different ways** to the same message (or method invocation)
+- example: `#move` or `#cut`
 - accomplished through:
 	- class inheritance 
 	- interface inheritance (mixin modules)
-	- duck-typing (we don't care about the class, only the interface aka methods available on the object)
+	- duck-typing (we don't care about the class, only the public interface, that is, the methods available on the object)
 - supports DRY, limits duplication
 
 ### Encapsulation
 - objects **encapsulate** state
 - each object has its own state
-- intentional design lets us wall off data and methods and determine/control access to the object by explicitly determining its **public interface**
+- intentional design lets us wall off data and methods and control access to the object by explicitly determining its **public interface**
 - accomplished through *method access control* (`public`, `private`, `protected`)
 - metaphor of ports: standardized(`public`) vs proprietary(`protected`) vs no port available (`private`)
 
 ### Class and Interface Inheritance
-- class inheritance: (sub)class inherits from a single superclass, refine/redefine the superclass 'is-a' relationship
-- interface inheritance: mixin modules, as many as you wish, 'has-a' relationship
+- class inheritance: (sub)class inherits from a single superclass, refine/redefine/extend the superclass, *is-a* relationship
+- interface inheritance: mixin modules, as many as you wish, shared behaviors, constants, *has-a* relationship
 
 ### getter and setter methods
-- provide access to an object's instance variables and the values they point to, thus getters and setters permit us to read and write to an object's state
-- can be defined *manually* or by using `attr_*` methods
+- provides access to an object's instance variables and the values they point to, getters and setters permit us to read and write to an object's state
+- can be defined *manually/long-hand* or by using `attr_*` methods
 - instance methods called on objects instantiated from the custom class
 - subject to method access control (like other instance methods)
 
@@ -76,7 +79,7 @@
 - lets us call methods further along the method lookup path
 - `super` sends all arguments along
 - `super(arg1, arg2)` sends selected arguments along
-- `super()` sends **no** arguments along - one might use this if one wanted to use the passed in arguments in a subclass invocation of a method, but still wanted a piece of functionality from the superclass version of the method
+- `super()` sends **no** arguments along - you might use this if you wanted to use the passed in arguments in a (sub)class invocation of a method, but still wanted a piece of functionality from the superclass version of the method
 
 ### Class variables
 - begin with `@@` and are scoped at the class level
@@ -89,7 +92,7 @@
 
 ### Constants and Lexical Scope
 - constant resolution always looks to *lexical scope* first
-- *lexical scope* is close vicinity (for example inside the same class or module as the method called)
+- *lexical scope* is typically inside the same class or module as the method called
 
 ### Equality
 - `==` is a method, not an operator... it is a 'fake operator'
