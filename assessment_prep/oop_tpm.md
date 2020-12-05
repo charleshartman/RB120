@@ -1,13 +1,16 @@
 ## RB129 Interview - Talking Points
 
 ### General OOP Benefits
-- supports thinking at a more abstract level
-- encourages 'building blocks' thinking
-- allows us to visualize connections and interactions
-- break it down, build it up
+- supports thinking at a more abstract level 
+	- objects -> nouns, methods -> behaviors
+	- encourages 'building blocks' thinking
+	- allows us to visualize connections and interactions
+	- smaller pieces -> break it down, build it up
 - DRY (Don't Repeat Yourself)
-- data Protection
+- data protection (objects as containers)
 - explicit and intentional design
+- aids in maintaining codebase by decreasing dependancies
+- larger programs become a sum of smaller parts that have a degree of independence and an interdependence that is more flexible
 
 ### Classes and Objects
 - objects are created from classes
