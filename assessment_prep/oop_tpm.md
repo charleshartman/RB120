@@ -18,6 +18,10 @@
 - reserved words `class` and `end`, name in `CamelCase` format
 - every object has its own **state**: its instance variables and the values they reference
 
+### Constructors
+- invoke the class method `::new` on the class to instantiate a new instance of the class
+- if `#initialize` is defined on the class it will be automatically called upon instantiation of a new object of the class, thus `#initialize` is a *constructor*
+
 ### Polymorphism
 - the ability of objects of different types to respond **in different ways** to the same message (or method invocation)
 - example: `#move` or `#cut`
@@ -49,11 +53,6 @@
 - getter only: `attr_reader`
 - setter only: `attr_writer`
 
-### Class methods vs. Instance methods
-- class methods are called on the class itself
-- instance methods are called on objects that have been instantiated by the class
-- class methods are used for functionality that does not pertain to individual objects
-
 ### Modules
 - way of implementing multiple inheritance
 - *has-a* relationship
@@ -65,9 +64,17 @@
 - can be used for methods that don't fit elsewhere: *containers* (support staff)
 - access classes within modules with namespace resolution operator `::`, for example: `Creatures::Zombie`
 
-### Constructors
-- invoke the class method `::new` on the class to instantiate a new instance of the class
-- if `#initialize` is defined on the class it will be automatically called upon instantiation of a new object of the class, thus `#initialize` is a *constructor*
+### Class methods vs. Instance methods
+- class methods are called on the class itself
+- instance methods are called on objects that have been instantiated by the class
+- class methods are used for functionality that does not pertain to individual objects
+
+### self
+- when defining a *class method*, we prepend it to the name of the method to identify it as a class method
+- used within an *instance method* to distinguish it from local variable assignment behavior.
+- `self` always refers to the caller
+	- with class methods, it refers to the calling class 
+	- with instance methods it refers to the calling object and lets Ruby know that we are calling a method on that object rather than initializing a local variable of that name.
 
 ### Method Lookup Path
 - a distinct lookup path is followed each time a method is called
@@ -90,6 +97,12 @@
 - class variables allow objects to share state
 - do not use with inheritance, very easy to do unintentional things
 
+### Collaborator Objects
+- lets us store objects as state within other objects
+- collaboration represents connections between various parts of larger program
+- we can think of collaborator objects as 'super pointers'
+- should be considered from the very beginning of code design
+
 ### Truthiness
 - prior teachings apply
 
@@ -110,19 +123,6 @@
 - this means that we can ‌(re)define these methods in our custom classes
 - this is powerful but must be done with clarity and intention to avoid confusion and unintended consequences
 - these 'fake operator' methods should act in line with their respective 'operator-like' expectations
-
-### Collaborator Objects
-- lets us store objects as state within other objects
-- collaboration represents connections between various parts of larger program
-- we can think of collaborator objects as 'super pointers'
-- should be considered from the very beginning of code design
-
-### self
-- when defining a *class method*, we prepend it to the name of the method to identify it as a class method
-- used within an *instance method* to distinguish it from local variable assignment behavior.
-- `self` always refers to the caller
-	- with class methods, it refers to the calling class 
-	- with instance methods it refers to the calling object and lets Ruby know that we are calling a method on that object rather than initializing a local variable of that name.
 
 ### Method Access Control
 - these are methods, also called access modifiers
