@@ -1,5 +1,4 @@
 # example2.rb
-
 # Constructors
 
 class Interview
@@ -10,3 +9,5 @@ end
 
 charles = Interview.new('Tuesday')
 p charles
+
+puts charles.instance_of?(Interview)

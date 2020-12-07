@@ -39,8 +39,8 @@
 - metaphor of ports: standardized(`public`) vs proprietary(`protected`) vs no port available (`private`)
 
 ### Class and Interface Inheritance
-- class inheritance: (sub)class inherits from a single superclass, refine/redefine/extend the superclass, *is-a* relationship
-- interface inheritance: mixin modules, as many as you wish, shared behaviors, constants, *has-a* relationship
+- class inheritance: (sub)class inherits from a single superclass, refine/redefine/extend the superclass, *is-a* relationship, hiearchical
+- interface inheritance: mixin modules, as many as you wish, shared behaviors, constants, *has-a* relationship, non-hiearchical
 
 ### getter and setter methods
 - provides access to an object's instance variables and the values they point to, getters and setters permit us to read and write to an object's state
@@ -56,6 +56,7 @@
 ### Modules
 - way of implementing multiple inheritance
 - *has-a* relationship
+- non-hiearchical
 - we can *mixin* to a class as many modules as we wish
 - modules are mixed in to a class using the `include` method invocation
 - modules fall between the object's `class` and its `superclass` in the method lookup path
@@ -68,6 +69,7 @@
 - class methods are called on the class itself
 - instance methods are called on objects that have been instantiated by the class
 - class methods are used for functionality that does not pertain to individual objects
+- instance methods are used for functionality pertaining to individual objects instantiated by the class
 
 ### self
 - when defining a *class method*, we prepend it to the name of the method to identify it as a class method

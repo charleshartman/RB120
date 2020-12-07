@@ -1,5 +1,4 @@
 # example1.rb
-
 # General OOP
 # Classes and Objects
 
