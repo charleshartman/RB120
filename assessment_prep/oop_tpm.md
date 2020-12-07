@@ -23,7 +23,7 @@
 - if `#initialize` is defined on the class it will be automatically called upon instantiation of a new object of the class, thus `#initialize` is a *constructor*
 
 ### Polymorphism
-- the ability of objects of different types to respond **in different ways** to the same message (or method invocation)
+- the ability of objects of different types to respond to the same message (or method invocation), to a common interface
 - example: `#move` or `#cut`
 - accomplished through:
 	- class inheritance 
@@ -39,8 +39,8 @@
 - metaphor of ports: standardized(`public`) vs proprietary(`protected`) vs no port available (`private`)
 
 ### Class and Interface Inheritance
-- class inheritance: (sub)class inherits from a single superclass, refine/redefine/extend the superclass, *is-a* relationship, hiearchical
-- interface inheritance: mixin modules, as many as you wish, shared behaviors, constants, *has-a* relationship, non-hiearchical
+- class inheritance: (sub)class inherits from a single superclass, refine/redefine/extend the superclass, *is-a* relationship, hierarchical
+- interface inheritance: mixin modules, as many as you wish, shared behaviors, constants, *has-a* relationship, non-hierarchical
 
 ### getter and setter methods
 - provides access to an object's instance variables and the values they point to, getters and setters permit us to read and write to an object's state
@@ -56,7 +56,7 @@
 ### Modules
 - way of implementing multiple inheritance
 - *has-a* relationship
-- non-hiearchical
+- non-hierarchical
 - we can *mixin* to a class as many modules as we wish
 - modules are mixed in to a class using the `include` method invocation
 - modules fall between the object's `class` and its `superclass` in the method lookup path
